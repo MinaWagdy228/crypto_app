@@ -19,7 +19,7 @@ class CryptoApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'NeueMontreal',
       ),
-      home: const SettingsScreen(),
+      home: const SplashScreen(),
     );
   }
 }
