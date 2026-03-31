@@ -6,6 +6,7 @@ class AppAssets {
   static const String _coins = 'assets/coins';
   static const String _facebook = 'assets/facebook';
   static const String _menu = 'assets/menu';
+  static const String _settings = 'assets/settings';
 
   // Bottom navigation
   static const String navActivity = '$_bottomNav/Activity.svg';
@@ -21,6 +22,7 @@ class AppAssets {
   static const String splash = '$_images/splash.png';
   static const String logo = '$_images/logo.png';
   static const String withoutLogo = '$_images/without_logo.png';
+  static const String avatarProfile = '$_images/Avatar.png';
 
   // Coins
   static const String avalancheAvax = '$_coins/Avalanche (AVAX).svg';
@@ -58,4 +60,11 @@ class AppAssets {
   static const String menuScan = '$_menu/Scan.svg';
   static const String menuSearch = '$_menu/Search.svg';
   static const String menuStar = '$_menu/Star.svg';
+
+  // Settings
+  static const String settingsLanguage = '$_settings/Language.svg';
+  static const String settingsCurrency = '$_settings/Currency.svg';
+  static const String settingsAppearance = '$_settings/Appearance.svg';
+  static const String settingsPreference = '$_settings/Preference.svg';
+  static const String settingsAboutUs = '$_settings/About.svg';
 }

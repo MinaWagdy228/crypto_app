@@ -19,7 +19,7 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   // Screen States
   AuthMode _authMode = AuthMode.signIn; // Defaults to Sign In
-  bool _isEmailMethod = true;           // Defaults to Email input
+  bool _isEmailMethod = true; // Defaults to Email input
 
   // Controllers
   final TextEditingController _emailController = TextEditingController();
@@ -47,14 +47,11 @@ class _AuthScreenState extends State<AuthScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Top Bar: Close Button & The Custom Toggle Tab
               Row(
                 children: [
                   const Spacer(),
-                  // Our custom pill toggle
                   _buildAuthToggleTab(),
                   const Spacer(),
-                  const SizedBox(width: 48), // Balancing the close button width
                 ],
               ),
               const SizedBox(height: 32),
@@ -82,9 +79,15 @@ class _AuthScreenState extends State<AuthScreen> {
                     },
                     child: Text(
                       _isEmailMethod
-                          ? (isSignIn ? 'Sign in with mobile' : 'Register with mobile')
-                          : (isSignIn ? 'Sign in with email' : 'Register with email'),
-                      style: AppStyles.bodyMedium().copyWith(color: AppColors.primary),
+                          ? (isSignIn
+                                ? 'Sign in with mobile'
+                                : 'Register with mobile')
+                          : (isSignIn
+                                ? 'Sign in with email'
+                                : 'Register with email'),
+                      style: AppStyles.bodyMedium().copyWith(
+                        color: AppColors.primary,
+                      ),
                     ),
                   ),
                 ],
@@ -93,13 +96,17 @@ class _AuthScreenState extends State<AuthScreen> {
 
               if (_isEmailMethod)
                 CustomTextField(
-                  hintText: isSignIn ? 'Enter your email' : 'Please enter email',
+                  hintText: isSignIn
+                      ? 'Enter your email'
+                      : 'Please enter email',
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                 )
               else
                 CustomTextField(
-                  hintText: isSignIn ? 'Enter your mobile' : 'Please enter mobile',
+                  hintText: isSignIn
+                      ? 'Enter your mobile'
+                      : 'Please enter mobile',
                   controller: _mobileController,
                   keyboardType: TextInputType.phone,
                 ),
@@ -110,7 +117,9 @@ class _AuthScreenState extends State<AuthScreen> {
               Text('Password', style: AppStyles.bodyMedium()),
               const SizedBox(height: 12),
               CustomTextField(
-                hintText: isSignIn ? 'Enter your password' : 'Please enter password',
+                hintText: isSignIn
+                    ? 'Enter your password'
+                    : 'Please enter password',
                 controller: _passwordController,
                 isPassword: true,
               ),
@@ -120,7 +129,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'Forgot password?',
-                  style: AppStyles.bodyMedium().copyWith(color: AppColors.primary),
+                  style: AppStyles.bodyMedium(color: AppColors.primary),
                 ),
                 const SizedBox(height: 32),
               ] else ...[
@@ -133,14 +142,19 @@ class _AuthScreenState extends State<AuthScreen> {
                 width: double.infinity,
                 onPressed: () {
                   // TODO: Connect to Auth ViewModel logic
-                  print(isSignIn ? "Executing Sign In..." : "Executing Sign Up...");
+                  print(
+                    isSignIn ? "Executing Sign In..." : "Executing Sign Up...",
+                  );
                 },
               ),
               const SizedBox(height: 32),
 
               // 7. Social Logins
               Center(
-                child: Text('Or login with', style: AppStyles.bodyMedium()),
+                child: Text(
+                  isSignIn ? 'Or sign in with' : 'Or sign up with',
+                  style: AppStyles.bodyMedium(),
+                ),
               ),
               const SizedBox(height: 24),
               Row(
@@ -175,7 +189,10 @@ class _AuthScreenState extends State<AuthScreen> {
                         size: 40,
                       ),
                       const SizedBox(height: 12),
-                      Text('Use fingerprint instead?', style: AppStyles.bodyMedium()),
+                      Text(
+                        'Use fingerprint instead?',
+                        style: AppStyles.bodyMedium(),
+                      ),
                     ],
                   ),
                 ),
@@ -194,7 +211,8 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget _buildAuthToggleTab() {
     return Container(
       height: 40,
-      width: 200, // Fixed width to match the Figma proportions
+      width: 200,
+      // Fixed width to match the Figma proportions
       padding: EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: AppColors.darkSurface, // The background of the pill
@@ -202,14 +220,8 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
       child: Row(
         children: [
-          _buildTabSegment(
-            title: 'Sign in',
-            mode: AuthMode.signIn,
-          ),
-          _buildTabSegment(
-            title: 'Sign up',
-            mode: AuthMode.signUp,
-          ),
+          _buildTabSegment(title: 'Sign in', mode: AuthMode.signIn),
+          _buildTabSegment(title: 'Sign up', mode: AuthMode.signUp),
         ],
       ),
     );

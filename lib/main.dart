@@ -1,3 +1,4 @@
+import 'package:crypto_app/features/settings/presentation/SettingsScreen.dart';
 import 'package:flutter/material.dart';
 import 'features/splash/presentation/SplashScreen.dart';
 
@@ -18,7 +19,7 @@ class CryptoApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'NeueMontreal',
       ),
-      home: const SplashScreen(), // Pointing to our custom splash!
+      home: const SettingsScreen(),
     );
   }
 }
