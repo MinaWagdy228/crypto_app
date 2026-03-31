@@ -1,5 +1,8 @@
+import 'package:crypto_app/core/routing/RouteGenerator.dart';
+import 'package:crypto_app/features/profile/presentation/ProfileScreen.dart';
 import 'package:crypto_app/features/settings/presentation/SettingsScreen.dart';
 import 'package:flutter/material.dart';
+import 'core/routing/AppRoutes.dart';
 import 'features/splash/presentation/SplashScreen.dart';
 
 void main() {
@@ -19,7 +22,9 @@ class CryptoApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'NeueMontreal',
       ),
-      home: const SplashScreen(),
+      initialRoute: AppRoutes.splash,
+      onGenerateRoute: RouteGenerator.generateRoute,
+      home: const ProfileScreen(),
     );
   }
 }

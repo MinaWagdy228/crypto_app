@@ -1,0 +1,49 @@
+import 'package:flutter/material.dart';
+import 'AppRoutes.dart';
+
+import '../../features/splash/presentation/SplashScreen.dart';
+import '../../features/onboarding/presentation/OnboardingContent.dart';
+import '../../features/auth/presentation/AuthScreen.dart';
+import '../../features/profile/presentation/ProfileScreen.dart';
+import '../../features/settings/presentation/SettingsScreen.dart';
+
+class RouteGenerator {
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    // You can also extract arguments from settings.arguments here if needed later
+
+    switch (settings.name) {
+      case AppRoutes.splash:
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
+
+      case AppRoutes.onboarding:
+        return MaterialPageRoute(builder: (_) => const OnboardingScreen());
+
+      case AppRoutes.auth:
+        return MaterialPageRoute(builder: (_) => const AuthScreen());
+
+      case AppRoutes.profile:
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+
+      case AppRoutes.settings:
+        return MaterialPageRoute(builder: (_) => const SettingsScreen());
+
+      case AppRoutes.home:
+        return MaterialPageRoute(
+          builder: (_) => const ProfileScreen(),
+        ); // Placeholder for HomeScreen
+      default:
+        return _errorRoute();
+    }
+  }
+
+  static Route<dynamic> _errorRoute() {
+    return MaterialPageRoute(
+      builder: (_) {
+        return Scaffold(
+          appBar: AppBar(title: const Text('Error')),
+          body: const Center(child: Text('ERROR: Route not found!')),
+        );
+      },
+    );
+  }
+}

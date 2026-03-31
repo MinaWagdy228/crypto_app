@@ -1,3 +1,4 @@
+import 'package:crypto_app/core/routing/AppRoutes.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/AppAssets.dart';
 import '../../../core/theme/AppColors.dart';
@@ -142,6 +143,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 width: double.infinity,
                 onPressed: () {
                   // TODO: Connect to Auth ViewModel logic
+                  Navigator.pushReplacementNamed(context, AppRoutes.home);
                   print(
                     isSignIn ? "Executing Sign In..." : "Executing Sign Up...",
                   );

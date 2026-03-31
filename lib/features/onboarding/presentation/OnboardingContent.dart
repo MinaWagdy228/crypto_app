@@ -1,3 +1,4 @@
+import 'package:crypto_app/core/routing/AppRoutes.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/AppAssets.dart';
@@ -36,17 +37,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     OnboardingContent(
       image: AppAssets.onboard1,
       title: 'Trade anytime anywhere',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
+      description:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
     ),
     OnboardingContent(
       image: AppAssets.onboard2, // The astronaut taking off
       title: 'Transact fast and easy',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
+      description:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
     ),
     OnboardingContent(
       image: AppAssets.onboard3, // The astronaut with coffee
       title: 'Save and invest at the same time',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
+      description:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
     ),
   ];
 
@@ -62,7 +66,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-// Logic for the "Next" button
+  // Logic for the "Next" button
   void _onNextPressed() {
     if (_currentPageIndex < _contents.length - 1) {
       // Animate to the next page
@@ -71,12 +75,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      // We are on the last page!
-      // Replace the current screen with the Sign In Screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const AuthScreen()),
-      );
+      Navigator.pushReplacementNamed(context, AppRoutes.auth);
     }
   }
 
@@ -105,7 +104,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         // The Astronaut Image
                         Image.asset(
                           _contents[index].image,
-                          height: 300, // Adjust this based on how the assets look on screen
+                          height: 300,
+                          // Adjust this based on how the assets look on screen
                           fit: BoxFit.contain,
                         ),
                         const SizedBox(height: 48),
@@ -141,15 +141,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       _contents.length,
-                          (index) => _buildDot(index: index),
+                      (index) => _buildDot(index: index),
                     ),
                   ),
                   const SizedBox(height: 32),
 
                   // Our Reusable Button!
                   PrimaryButton(
-                    text: _currentPageIndex == _contents.length - 1 ? 'Get Started' : 'Next',
-                    width: 180, // Specifically sizing it to 180px as per your Figma file
+                    text: _currentPageIndex == _contents.length - 1
+                        ? 'Get Started'
+                        : 'Next',
+                    width: 180,
                     onPressed: _onNextPressed,
                   ),
                 ],
@@ -170,9 +172,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       // If it's the active page, make it wide and green. Otherwise, small and grey.
       width: _currentPageIndex == index ? 24 : 8,
       decoration: BoxDecoration(
-        color: _currentPageIndex == index
-            ? AppColors.primary
-            : AppColors.grey,
+        color: _currentPageIndex == index ? AppColors.primary : AppColors.grey,
         borderRadius: BorderRadius.circular(4),
       ),
     );

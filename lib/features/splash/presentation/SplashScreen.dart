@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/AppAssets.dart';
+import '../../../core/routing/AppRoutes.dart';
 import '../../../core/theme/AppColors.dart';
 import '../../onboarding/presentation/OnboardingContent.dart';
 
@@ -25,10 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
 
     // pushReplacement ensures the user can't swipe back to the splash screen!
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-    );
+    Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
   }
 
   @override
