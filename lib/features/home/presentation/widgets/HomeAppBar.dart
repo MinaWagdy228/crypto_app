@@ -29,8 +29,8 @@ class HomeAppBar extends StatelessWidget {
           GestureDetector(
             onTap: onAvatarTapped,
             child: Container(
-              width: 40,
-              height: 40,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColors.darkSurface, width: 2),
