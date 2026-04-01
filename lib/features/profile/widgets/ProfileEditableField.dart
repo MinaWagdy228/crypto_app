@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/AppColors.dart';
-import '../../../../core/theme/AppStyles.dart';
-import '../../../../core/widgets/CustomTextField.dart';
+import '../../../../../core/theme/AppColors.dart';
+import '../../../../../core/theme/AppStyles.dart';
+import '../../../../../core/widgets/CustomTextField.dart';
 
 class ProfileEditableField extends StatelessWidget {
   final String label;

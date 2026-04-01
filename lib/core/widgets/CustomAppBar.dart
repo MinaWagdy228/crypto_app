@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/constants/AppAssets.dart';
-import '../../../../core/theme/AppColors.dart';
+import '../../../core/constants/AppAssets.dart';
+import '../../../core/theme/AppColors.dart';
 
 class HomeAppBar extends StatelessWidget {
   final VoidCallback? onAvatarTapped;

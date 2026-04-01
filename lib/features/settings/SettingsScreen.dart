@@ -1,9 +1,9 @@
 import 'package:crypto_app/core/constants/AppAssets.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/AppColors.dart';
-import '../../../core/theme/AppStyles.dart';
-import '../../../core/widgets/SettingsTile.dart';
+import '../../core/theme/AppColors.dart';
+import '../../core/theme/AppStyles.dart';
+import 'widgets/SettingsTile.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});

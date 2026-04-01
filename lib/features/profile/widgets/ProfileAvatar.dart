@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/AppAssets.dart';
-import '../../../../core/theme/AppColors.dart';
+import '../../../../../core/constants/AppAssets.dart';
+import '../../../../../core/theme/AppColors.dart';
 
 class ProfileAvatar extends StatelessWidget {
   final bool isEditMode;

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import '../../features/main_layout/presentation/MainLayoutScreen.dart';
 import 'AppRoutes.dart';
 
-import '../../features/splash/presentation/SplashScreen.dart';
-import '../../features/onboarding/presentation/OnboardingContent.dart';
-import '../../features/auth/presentation/AuthScreen.dart';
-import '../../features/profile/presentation/ProfileScreen.dart';
-import '../../features/settings/presentation/SettingsScreen.dart';
+import '../../features/splash/SplashScreen.dart';
+import '../../features/onboarding/OnboardingContent.dart';
+import '../../features/auth/AuthScreen.dart';
+import '../../features/profile/ProfileScreen.dart';
+import '../../features/settings/SettingsScreen.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {

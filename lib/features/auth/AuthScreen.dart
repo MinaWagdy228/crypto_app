@@ -1,11 +1,11 @@
 import 'package:crypto_app/core/routing/AppRoutes.dart';
 import 'package:flutter/material.dart';
-import '../../../core/constants/AppAssets.dart';
-import '../../../core/theme/AppColors.dart';
-import '../../../core/theme/AppStyles.dart';
-import '../../../core/widgets/CustomTextField.dart';
-import '../../../core/widgets/PrimaryButton.dart';
-import '../../../core/widgets/SocialLoginButton.dart';
+import '../../core/constants/AppAssets.dart';
+import '../../core/theme/AppColors.dart';
+import '../../core/theme/AppStyles.dart';
+import '../../core/widgets/CustomTextField.dart';
+import '../../core/widgets/PrimaryButton.dart';
+import 'widgets/SocialLoginButton.dart';
 
 // 1. Define the states our screen can be in
 enum AuthMode { signIn, signUp }

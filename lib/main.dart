@@ -1,9 +1,9 @@
 import 'package:crypto_app/core/routing/RouteGenerator.dart';
-import 'package:crypto_app/features/profile/presentation/ProfileScreen.dart';
-import 'package:crypto_app/features/settings/presentation/SettingsScreen.dart';
+import 'package:crypto_app/features/profile/ProfileScreen.dart';
+import 'package:crypto_app/features/settings/SettingsScreen.dart';
 import 'package:flutter/material.dart';
 import 'core/routing/AppRoutes.dart';
-import 'features/splash/presentation/SplashScreen.dart';
+import 'features/splash/SplashScreen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

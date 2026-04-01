@@ -1,14 +1,14 @@
-import 'package:crypto_app/core/routing/AppRoutes.dart';
-import 'package:crypto_app/features/home/presentation/widgets/ActionCard.dart';
-import 'package:crypto_app/features/home/presentation/widgets/CoinCard.dart';
-import 'package:crypto_app/features/home/presentation/widgets/CoinListSection.dart';
-import 'package:crypto_app/features/home/presentation/widgets/HomeAppBar.dart';
-import 'package:crypto_app/features/home/presentation/widgets/HomeMenuBottomSheet.dart';
-import 'package:crypto_app/features/home/presentation/widgets/QuickActionsGrid.dart';
+import 'package:crypto_app/features/home/widgets/ActionCard.dart';
+import 'package:crypto_app/features/home/widgets/CoinCard.dart';
+import 'package:crypto_app/features/home/widgets/CoinListSection.dart';
+import 'package:crypto_app/core/widgets/CustomAppBar.dart';
+import 'package:crypto_app/features/home/widgets/HomeMenuBottomSheet.dart';
+import 'package:crypto_app/features/home/widgets/QuickActionsGrid.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/AppColors.dart';
-import '../../../core/constants/AppAssets.dart';
+import '../../../core/theme/AppColors.dart';
+import '../../core/constants/AppAssets.dart';
+import '../../core/routing/AppRoutes.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

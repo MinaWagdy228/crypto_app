@@ -1,10 +1,10 @@
-import 'package:crypto_app/features/home/presentation/HomeScreen.dart';
+import 'package:crypto_app/features/home/HomeScreen.dart';
 import 'package:crypto_app/features/main_layout/presentation/widgets/CustomBottomNavBar.dart';
-import 'package:crypto_app/features/settings/presentation/SettingsScreen.dart';
+import 'package:crypto_app/features/market/MarketScreen.dart';
+import 'package:crypto_app/features/settings/SettingsScreen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/AppColors.dart';
-
 
 class MainLayoutScreen extends StatefulWidget {
   const MainLayoutScreen({super.key});
@@ -20,9 +20,13 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
   // 2. The screens corresponding to the tabs
   final List<Widget> _screens = [
     const HomeScreen(),
-    const Center(child: Text('Markets', style: TextStyle(color: Colors.white))),
-    const Center(child: Text('Activity', style: TextStyle(color: Colors.white))),
-    const Center(child: Text('Wallet', style: TextStyle(color: Colors.white))),
+    const MarketScreen(),
+    const Center(
+      child: Text('Activity', style: TextStyle(color: Colors.white)),
+    ),
+    const Center(
+      child: Text('Wallet', style: TextStyle(color: Colors.white)),
+    ),
     const SettingsScreen(),
   ];
 
@@ -42,10 +46,7 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
       body: Stack(
         children: [
           // Preserves the state of the screens as you switch
-          IndexedStack(
-            index: _currentIndex,
-            children: _screens,
-          ),
+          IndexedStack(index: _currentIndex, children: _screens),
 
           // The floating Bottom Navigation Bar
           Positioned(

@@ -1,11 +1,11 @@
 import 'package:crypto_app/core/routing/AppRoutes.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/AppAssets.dart';
-import '../../../core/theme/AppColors.dart';
-import '../../../core/theme/AppStyles.dart';
-import '../../../core/widgets/PrimaryButton.dart';
-import '../../auth/presentation/AuthScreen.dart';
+import '../../core/constants/AppAssets.dart';
+import '../../core/theme/AppColors.dart';
+import '../../core/theme/AppStyles.dart';
+import '../../core/widgets/PrimaryButton.dart';
+import '../auth/AuthScreen.dart';
 
 // 1. A simple class to hold our page data
 class OnboardingContent {

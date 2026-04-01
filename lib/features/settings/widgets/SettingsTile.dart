@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../theme/AppColors.dart';
-import '../theme/AppStyles.dart';
+import '../../../core/theme/AppColors.dart';
+import '../../../core/theme/AppStyles.dart';
 
 class SettingsTile extends StatelessWidget {
   final String iconPath;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/AppColors.dart';
-import '../../../../core/theme/AppStyles.dart';
-import '../../../../core/widgets/PrimaryButton.dart';
-import '../../../core/widgets/ProfileAvatar.dart';
-import '../../../core/widgets/ProfileEditableField.dart';
+import '../../../core/theme/AppColors.dart';
+import '../../../core/theme/AppStyles.dart';
+import '../../../core/widgets/PrimaryButton.dart';
+import 'widgets/ProfileAvatar.dart';
+import 'widgets/ProfileEditableField.dart';
 
 // 1. Define the UI states
 enum ProfileMode { view, edit }
