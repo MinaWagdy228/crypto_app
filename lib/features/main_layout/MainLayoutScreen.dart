@@ -1,10 +1,10 @@
 import 'package:crypto_app/features/home/HomeScreen.dart';
-import 'package:crypto_app/features/main_layout/presentation/widgets/CustomBottomNavBar.dart';
+import 'package:crypto_app/features/main_layout/widgets/CustomBottomNavBar.dart';
 import 'package:crypto_app/features/market/MarketScreen.dart';
 import 'package:crypto_app/features/settings/SettingsScreen.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/AppColors.dart';
+import '../../../core/theme/AppColors.dart';
 
 class MainLayoutScreen extends StatefulWidget {
   const MainLayoutScreen({super.key});

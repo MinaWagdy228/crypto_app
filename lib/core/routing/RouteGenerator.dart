@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../features/main_layout/presentation/MainLayoutScreen.dart';
+import '../../features/main_layout/MainLayoutScreen.dart';
 import 'AppRoutes.dart';
 
 import '../../features/splash/SplashScreen.dart';
