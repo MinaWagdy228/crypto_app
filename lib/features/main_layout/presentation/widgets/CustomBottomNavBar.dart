@@ -64,8 +64,6 @@ class CustomBottomNavBar extends StatelessWidget {
                     isSelected ? AppColors.primary : AppColors.grey,
                     BlendMode.srcIn,
                   ),
-                  height: 44,
-                  width: 44,
                 ),
                 const SizedBox(height: 4),
                 Text(

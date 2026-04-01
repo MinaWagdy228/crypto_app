@@ -64,8 +64,6 @@ class HomeAppBar extends StatelessWidget {
       child: SvgPicture.asset(
         iconPath,
         colorFilter: const ColorFilter.mode(AppColors.primary, BlendMode.srcIn),
-        width: 24,
-        height: 24,
       ),
     );
   }

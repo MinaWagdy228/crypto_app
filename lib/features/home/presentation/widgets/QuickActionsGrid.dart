@@ -62,9 +62,7 @@ class QuickActionsGrid extends StatelessWidget {
               children: [
                 SvgPicture.asset(
                   item.iconPath,
-                  colorFilter: const ColorFilter.mode(AppColors.secondary, BlendMode.srcIn),
-                  width: 28,
-                  height: 28,
+                  colorFilter: const ColorFilter.mode(AppColors.secondary, BlendMode.srcIn)
                 ),
                 const SizedBox(height: 8),
                 Text(
