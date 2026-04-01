@@ -1,25 +1,55 @@
+import 'package:crypto_app/data/datasource/RemoteDataSourceImpl.dart';
 import 'package:crypto_app/features/home/widgets/ActionCard.dart';
-import 'package:crypto_app/features/home/widgets/CoinCard.dart';
+import 'package:crypto_app/features/home/widgets/CoinCard.dart'; // Assuming CoinData is here
 import 'package:crypto_app/features/home/widgets/CoinListSection.dart';
 import 'package:crypto_app/core/widgets/CustomAppBar.dart';
 import 'package:crypto_app/features/home/widgets/HomeMenuBottomSheet.dart';
 import 'package:crypto_app/features/home/widgets/QuickActionsGrid.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/network/DioHelper.dart';
 import '../../../core/theme/AppColors.dart';
 import '../../core/constants/AppAssets.dart';
 import '../../core/routing/AppRoutes.dart';
+import '../../data/repository/CoinRepoImpl.dart';
+import '../../data/model/CoinModel.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Future<List<CoinModel>> _topCoinsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Manual Dependency Injection
+    final dioHelper = DioHelper();
+    final remoteDataSource = Remotedatasourceimpl(dioHelper);
+    final coinRepo = Coinrepoimpl(remoteDataSource: remoteDataSource);
+
+    _topCoinsFuture = coinRepo.getTopCoins();
+  }
+
+  // Helper method to assign local assets based on API symbol
+  String _getIconForSymbol(String symbol) {
+    if (symbol.contains('BTC')) return AppAssets.bitcoinBtc;
+    if (symbol.contains('ETH')) return AppAssets.bitcoinBtc; // Update to ETH asset if you have it
+    if (symbol.contains('ADA')) return AppAssets.cardanoAda;
+    if (symbol.contains('SOL')) return AppAssets.solanaSol;
+    return AppAssets.bitcoinBtc; // Fallback icon
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // We don't use a bottomNavigationBar here because it's handled by MainLayoutScreen
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
       body: SafeArea(
-        bottom: false, // Let the bottom background extend behind the nav bar
+        bottom: false,
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -30,34 +60,26 @@ class HomeScreen extends StatelessWidget {
                 onScanTapped: () => print('Scan tapped'),
                 onNotifTapped: () => print('Notif tapped'),
               ),
-
               const SizedBox(height: 16),
-
               QuickActionsGrid(
                 onMoreTapped: () {
-                  // Triggers the static method to show the bottom sheet
                   HomeMenuBottomSheet.show(context);
                 },
               ),
-
               const SizedBox(height: 24),
 
-              // --- LIGHT BOTTOM SECTION ---
               Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: AppColors.white,
-                  // Matches Figma's light background for cards
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
                   ),
                 ),
-                // Padding at bottom to account for the floating bottom nav bar
                 padding: const EdgeInsets.only(top: 24, bottom: 120),
                 child: Column(
                   children: [
-                    // (Ensure you have imported your updated AppAssets.dart)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
                       child: Column(
@@ -77,9 +99,9 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 32),
 
+                    // --- STATIC RECENT COINS ---
                     CoinListSection(
                       title: 'Recent Coin',
                       coins: [
@@ -97,44 +119,51 @@ class HomeScreen extends StatelessWidget {
                           iconPath: AppAssets.solanaSol,
                           isPositive: false,
                         ),
-                        CoinData(
-                          pair: 'ETH/BUSD',
-                          price: '3,105.12',
-                          change: '+1.12%',
-                          iconPath: AppAssets.bitcoinBtc,
-                          // Placeholder if ETH asset is missing
-                          isPositive: true,
-                        ),
                       ],
                     ),
-
                     const SizedBox(height: 32),
 
-                    CoinListSection(
-                      title: 'Top Coins',
-                      coins: [
-                        CoinData(
-                          pair: 'MFT/BUSD',
-                          price: '40,059.83',
-                          change: '+0.81%',
-                          iconPath: AppAssets.hifiFinanceMft,
-                          isPositive: true,
-                        ),
-                        CoinData(
-                          pair: 'REN/BUSD',
-                          price: '2,059.83',
-                          change: '-0.81%',
-                          iconPath: AppAssets.renRen,
-                          isPositive: false,
-                        ),
-                        CoinData(
-                          pair: 'ADA/BUSD',
-                          price: '1.24',
-                          change: '+4.31%',
-                          iconPath: AppAssets.cardanoAda,
-                          isPositive: true,
-                        ),
-                      ],
+                    // --- DYNAMIC TOP COINS ---
+                    FutureBuilder<List<CoinModel>>(
+                      future: _topCoinsFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(32.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text('Error loading coins: ${snapshot.error}'),
+                          );
+                        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+
+                          // Map the API CoinModels into UI CoinData objects
+                          final apiCoins = snapshot.data!.map((coin) {
+                            // Format prices and percentages nicely
+                            final formattedPrice = coin.lastPrice.toStringAsFixed(2);
+                            final prefix = coin.priceChangePercent > 0 ? '+' : '';
+                            final formattedChange = '$prefix${coin.priceChangePercent.toStringAsFixed(2)}%';
+
+                            return CoinData(
+                              pair: coin.symbol.replaceAll('USDT', '/USDT'), // e.g., BTCUSDT -> BTC/USDT
+                              price: formattedPrice,
+                              change: formattedChange,
+                              iconPath: _getIconForSymbol(coin.symbol),
+                              isPositive: coin.priceChangePercent >= 0,
+                            );
+                          }).toList();
+
+                          return CoinListSection(
+                            title: 'Top Coins',
+                            coins: apiCoins,
+                          );
+                        }
+
+                        return const SizedBox.shrink(); // Fallback if no data
+                      },
                     ),
                   ],
                 ),
