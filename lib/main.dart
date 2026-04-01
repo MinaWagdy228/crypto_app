@@ -24,7 +24,6 @@ class CryptoApp extends StatelessWidget {
       ),
       initialRoute: AppRoutes.splash,
       onGenerateRoute: RouteGenerator.generateRoute,
-      home: const ProfileScreen(),
     );
   }
 }

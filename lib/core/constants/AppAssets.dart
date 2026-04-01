@@ -23,6 +23,8 @@ class AppAssets {
   static const String logo = '$_images/logo.png';
   static const String withoutLogo = '$_images/without_logo.png';
   static const String avatarProfile = '$_images/Avatar.png';
+  static const String rocket = '$_images/Rocket.svg';
+  static const String creditCard = '$_images/creditCard.svg';
 
   // Coins
   static const String avalancheAvax = '$_coins/Avalanche (AVAX).svg';

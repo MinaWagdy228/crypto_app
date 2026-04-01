@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../features/main_layout/presentation/MainLayoutScreen.dart';
 import 'AppRoutes.dart';
 
 import '../../features/splash/presentation/SplashScreen.dart';
@@ -27,10 +28,8 @@ class RouteGenerator {
       case AppRoutes.settings:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
 
-      case AppRoutes.home:
-        return MaterialPageRoute(
-          builder: (_) => const ProfileScreen(),
-        ); // Placeholder for HomeScreen
+      case AppRoutes.mainLayout:
+        return MaterialPageRoute(builder: (_) => const MainLayoutScreen());
       default:
         return _errorRoute();
     }

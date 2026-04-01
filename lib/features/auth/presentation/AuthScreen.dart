@@ -143,8 +143,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 width: double.infinity,
                 onPressed: () {
                   // TODO: Connect to Auth ViewModel logic
-                  Navigator.pushReplacementNamed(context, AppRoutes.home);
-                  print(
+                  Navigator.pushReplacementNamed(context, AppRoutes.mainLayout);                  print(
                     isSignIn ? "Executing Sign In..." : "Executing Sign Up...",
                   );
                 },
