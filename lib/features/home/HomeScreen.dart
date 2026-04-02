@@ -27,21 +27,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Manual Dependency Injection
-    final dioHelper = DioHelper();
-    final remoteDataSource = Remotedatasourceimpl(dioHelper);
-    final coinRepo = Coinrepoimpl(remoteDataSource: remoteDataSource);
+    final coinRepo = Coinrepoimpl();
 
     _topCoinsFuture = coinRepo.getTopCoins();
   }
 
-  // Helper method to assign local assets based on API symbol
   String _getIconForSymbol(String symbol) {
     if (symbol.contains('BTC')) return AppAssets.bitcoinBtc;
-    if (symbol.contains('ETH')) return AppAssets.bitcoinBtc; // Update to ETH asset if you have it
+    if (symbol.contains('ETH')) return AppAssets.bitcoinBtc;
     if (symbol.contains('ADA')) return AppAssets.cardanoAda;
     if (symbol.contains('SOL')) return AppAssets.solanaSol;
-    return AppAssets.bitcoinBtc; // Fallback icon
+    return AppAssets.bitcoinBtc;
   }
 
   @override
@@ -127,7 +123,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     FutureBuilder<List<CoinModel>>(
                       future: _topCoinsFuture,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.all(32.0),
@@ -136,19 +133,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         } else if (snapshot.hasError) {
                           return Center(
-                            child: Text('Error loading coins: ${snapshot.error}'),
+                            child: Text(
+                              'Error loading coins: ${snapshot.error}',
+                            ),
                           );
-                        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-
+                        } else if (snapshot.hasData &&
+                            snapshot.data!.isNotEmpty) {
                           // Map the API CoinModels into UI CoinData objects
                           final apiCoins = snapshot.data!.map((coin) {
                             // Format prices and percentages nicely
-                            final formattedPrice = coin.lastPrice.toStringAsFixed(2);
-                            final prefix = coin.priceChangePercent > 0 ? '+' : '';
-                            final formattedChange = '$prefix${coin.priceChangePercent.toStringAsFixed(2)}%';
+                            final formattedPrice = coin.lastPrice
+                                .toStringAsFixed(2);
+                            final prefix = coin.priceChangePercent > 0
+                                ? '+'
+                                : '';
+                            final formattedChange =
+                                '$prefix${coin.priceChangePercent.toStringAsFixed(2)}%';
 
                             return CoinData(
-                              pair: coin.symbol.replaceAll('USDT', '/USDT'), // e.g., BTCUSDT -> BTC/USDT
+                              pair: coin.symbol.replaceAll('USDT', '/USDT'),
+                              // e.g., BTCUSDT -> BTC/USDT
                               price: formattedPrice,
                               change: formattedChange,
                               iconPath: _getIconForSymbol(coin.symbol),

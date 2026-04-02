@@ -1,4 +1,4 @@
-import 'package:crypto_app/core/network/ApiConstants.dart';
+import 'package:crypto_app/core/constants/ApiConstants.dart';
 import 'package:dio/dio.dart';
 
 class DioHelper {

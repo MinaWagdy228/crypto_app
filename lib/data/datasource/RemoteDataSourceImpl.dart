@@ -1,11 +1,13 @@
-import 'package:crypto_app/core/network/ApiConstants.dart';
+import 'package:crypto_app/core/constants/ApiConstants.dart';
 import 'package:crypto_app/core/network/DioHelper.dart';
 import 'package:crypto_app/data/datasource/RemoteDataSource.dart';
 import 'package:crypto_app/data/model/CoinModel.dart';
 
 class Remotedatasourceimpl implements RemoteDataSource  {
-  final DioHelper dioHelper;
-  Remotedatasourceimpl(this.dioHelper);
+  late final DioHelper dioHelper;
+  Remotedatasourceimpl(){
+    dioHelper = DioHelper();
+  }
 
   @override
   Future<List<CoinModel>> getCoins() async{
