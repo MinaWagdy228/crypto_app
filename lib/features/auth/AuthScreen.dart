@@ -1,13 +1,20 @@
 import 'package:crypto_app/core/routing/AppRoutes.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../core/constants/AppAssets.dart';
 import '../../core/theme/AppColors.dart';
 import '../../core/theme/AppStyles.dart';
 import '../../core/widgets/CustomTextField.dart';
 import '../../core/widgets/PrimaryButton.dart';
+import '../../data/datasource/local/AuthLocalDataSourceImpl.dart';
+import '../../data/repository/AuthRepoImpl.dart';
 import 'widgets/SocialLoginButton.dart';
 
-// 1. Define the states our screen can be in
+import '../../data/model/UserModel.dart';
+import '../../data/repository/AuthRepo.dart';
+
 enum AuthMode { signIn, signUp }
 
 class AuthScreen extends StatefulWidget {
@@ -18,17 +25,43 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  // Screen States
-  AuthMode _authMode = AuthMode.signIn; // Defaults to Sign In
-  bool _isEmailMethod = true; // Defaults to Email input
+  AuthMode _authMode = AuthMode.signIn;
+  bool _isEmailMethod = true;
+
+  final _formKey = GlobalKey<FormState>();
+  bool _isInitializing = true;
+  bool _isLoading = false;
+
+  late AuthRepo _authRepo;
 
   // Controllers
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _initDependencies();
+  }
+
+  Future<void> _initDependencies() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final box = Hive.box<UserModel>('userBox');
+
+      final localDataSource = AuthLocalDataSourceImpl(box: box, sharedPreferences: prefs);
+      _authRepo = AuthRepoImpl(localDataSource: localDataSource);
+    } catch (e) {
+      print("Error initializing dependencies: $e");
+    } finally {
+      setState(() {
+        _isInitializing = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -40,9 +73,85 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
+  // --- BUSINESS LOGIC METHODS ---
+
+  Future<void> _handleSignUp() async {
+    // Triggers all the validators in the form
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
+      final user = UserModel(
+        username: _usernameController.text.trim(),
+        email: _emailController.text.trim(),
+        mobile: _mobileController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      await _authRepo.signUp(user);
+
+      setState(() {
+        _isLoading = false;
+        _authMode = AuthMode.signIn;
+      });
+
+      // Clear passwords for security
+      _passwordController.clear();
+      _confirmPasswordController.clear();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sign up successful! Please sign in.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleSignIn() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
+      bool success = false;
+      if (_isEmailMethod) {
+        success = await _authRepo.loginUserByEmail(
+            _emailController.text.trim(),
+            _passwordController.text
+        );
+      } else {
+        success = await _authRepo.loginUserByPhoneNumber(
+            _mobileController.text.trim(),
+            _passwordController.text
+        );
+      }
+
+      setState(() => _isLoading = false);
+
+      if (mounted) {
+        if (success) {
+          Navigator.pushReplacementNamed(context, AppRoutes.mainLayout);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Invalid credentials. Please try again.'),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Helper booleans to make the UI code cleaner
+    if (_isInitializing) {
+      return const Scaffold(
+        backgroundColor: AppColors.darkBackground,
+        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+      );
+    }
+
     final isSignIn = _authMode == AuthMode.signIn;
 
     return Scaffold(
@@ -50,209 +159,219 @@ class _AuthScreenState extends State<AuthScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Spacer(),
-                  _buildAuthToggleTab(),
-                  const Spacer(),
-                ],
-              ),
-              const SizedBox(height: 32),
-
-              // 2. Dynamic Main Title
-              Text(
-                isSignIn ? 'Sign in' : 'Sign up',
-                style: AppStyles.titleLarge(),
-              ),
-              const SizedBox(height: 32),
-
-              // 3. Input Fields
-              if (isSignIn) ...[
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      _isEmailMethod ? 'Email' : 'Mobile Number',
-                      style: AppStyles.bodyMedium(),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isEmailMethod = !_isEmailMethod;
-                        });
-                      },
-                      child: Text(
-                        _isEmailMethod
-                            ? 'Sign in with mobile'
-                            : 'Sign in with email',
-                        style: AppStyles.bodyMedium().copyWith(
-                          color: AppColors.primary,
+                    const Spacer(),
+                    _buildAuthToggleTab(),
+                    const Spacer(),
+                  ],
+                ),
+                const SizedBox(height: 32),
+
+                Text(
+                  isSignIn ? 'Sign in' : 'Sign up',
+                  style: AppStyles.titleLarge(),
+                ),
+                const SizedBox(height: 32),
+
+                if (isSignIn) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _isEmailMethod ? 'Email' : 'Mobile Number',
+                        style: AppStyles.bodyMedium(),
+                      ),
+                      GestureDetector(
+                        onTap: () => setState(() => _isEmailMethod = !_isEmailMethod),
+                        child: Text(
+                          _isEmailMethod ? 'Sign in with mobile' : 'Sign in with email',
+                          style: AppStyles.bodyMedium().copyWith(color: AppColors.primary),
                         ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  if (_isEmailMethod)
+                    CustomTextField(
+                      hintText: 'Enter your email',
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Email is required';
+                        if (!value.contains('@')) return 'Enter a valid email';
+                        return null;
+                      },
+                    )
+                  else
+                    CustomTextField(
+                      hintText: 'Enter your mobile',
+                      controller: _mobileController,
+                      keyboardType: TextInputType.phone,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Mobile is required';
+                        if (value.length < 8) return 'Enter a valid mobile number';
+                        return null;
+                      },
+                    ),
+                ] else ...[
+                  Text('Username', style: AppStyles.bodyMedium()),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    hintText: 'Please enter username',
+                    controller: _usernameController,
+                    keyboardType: TextInputType.name,
+                    validator: (value) => value!.isEmpty ? 'Username is required' : null,
+                  ),
+
+                  const SizedBox(height: 24),
+                  Text('Mobile Number', style: AppStyles.bodyMedium()),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    hintText: 'Please enter mobile',
+                    controller: _mobileController,
+                    keyboardType: TextInputType.phone,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'Mobile is required';
+                      if (value.length < 8) return 'Enter a valid mobile number';
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 24),
+                  Text('Email', style: AppStyles.bodyMedium()),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    hintText: 'Please enter email',
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'Email is required';
+                      if (!value.contains('@')) return 'Enter a valid email';
+                      return null;
+                    },
+                  ),
+                ],
+
+                const SizedBox(height: 24),
+
+                Text('Password', style: AppStyles.bodyMedium()),
+                const SizedBox(height: 12),
+                CustomTextField(
+                  hintText: isSignIn ? 'Enter your password' : 'Please enter password',
+                  controller: _passwordController,
+                  isPassword: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Password is required';
+                    if (value.length < 6) return 'Password must be at least 6 characters';
+                    return null;
+                  },
+                ),
+
+                if (!isSignIn) ...[
+                  const SizedBox(height: 24),
+                  Text('Confirm Password', style: AppStyles.bodyMedium()),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    hintText: 'Please confirm password',
+                    controller: _confirmPasswordController,
+                    isPassword: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'Confirm your password';
+                      if (value != _passwordController.text) return 'Passwords do not match';
+                      return null;
+                    },
+                  ),
+                ],
+
+                if (isSignIn) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    'Forgot password?',
+                    style: AppStyles.bodyMedium(color: AppColors.primary),
+                  ),
+                  const SizedBox(height: 32),
+                ] else ...[
+                  const SizedBox(height: 40),
+                ],
+
+                // 4. Primary Action Button with Loading State
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                    : PrimaryButton(
+                  text: isSignIn ? 'Sign in' : 'Sign up',
+                  width: double.infinity,
+                  onPressed: isSignIn ? _handleSignIn : _handleSignUp,
+                ),
+                const SizedBox(height: 32),
+
+                Center(
+                  child: Text(
+                    isSignIn ? 'Or sign in with' : 'Or sign up with',
+                    style: AppStyles.bodyMedium(),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SocialLoginButton(
+                        text: 'Facebook',
+                        iconPath: AppAssets.fbFacebook,
+                        onPressed: () => print('Facebook tapped'),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: SocialLoginButton(
+                        text: 'Google',
+                        iconPath: AppAssets.fbGoogle,
+                        onPressed: () => print('Google tapped'),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                if (_isEmailMethod)
-                  CustomTextField(
-                    hintText: 'Enter your email',
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                  )
-                else
-                  CustomTextField(
-                    hintText: 'Enter your mobile',
-                    controller: _mobileController,
-                    keyboardType: TextInputType.phone,
-                  ),
-              ] else ...[
-                Text('Username', style: AppStyles.bodyMedium()),
-                const SizedBox(height: 12),
-                CustomTextField(
-                  hintText: 'Please enter username',
-                  controller: _usernameController,
-                  keyboardType: TextInputType.name,
-                ),
 
-                const SizedBox(height: 24),
-                Text('Mobile Number', style: AppStyles.bodyMedium()),
-                const SizedBox(height: 12),
-                CustomTextField(
-                  hintText: 'Please enter mobile',
-                  controller: _mobileController,
-                  keyboardType: TextInputType.phone,
-                ),
-
-                const SizedBox(height: 24),
-                Text('Email', style: AppStyles.bodyMedium()),
-                const SizedBox(height: 12),
-                CustomTextField(
-                  hintText: 'Please enter email',
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-              ],
-
-              const SizedBox(height: 24),
-
-              // 4. Password Field
-              Text('Password', style: AppStyles.bodyMedium()),
-              const SizedBox(height: 12),
-              CustomTextField(
-                hintText: isSignIn
-                    ? 'Enter your password'
-                    : 'Please enter password',
-                controller: _passwordController,
-                isPassword: true,
-              ),
-
-              if (!isSignIn) ...[
-                const SizedBox(height: 24),
-                Text('Confirm Password', style: AppStyles.bodyMedium()),
-                const SizedBox(height: 12),
-                CustomTextField(
-                  hintText: 'Please confirm password',
-                  controller: _confirmPasswordController,
-                  isPassword: true,
-                ),
-              ],
-
-              // 5. Forgot Password (ONLY shows on Sign In)
-              if (isSignIn) ...[
-                const SizedBox(height: 16),
-                Text(
-                  'Forgot password?',
-                  style: AppStyles.bodyMedium(color: AppColors.primary),
-                ),
-                const SizedBox(height: 32),
-              ] else ...[
-                const SizedBox(height: 40), // Taller gap for Sign Up
-              ],
-
-              // 6. Primary Action Button
-              PrimaryButton(
-                text: isSignIn ? 'Sign in' : 'Sign up',
-                width: double.infinity,
-                onPressed: () {
-                  // TODO: Connect to Auth ViewModel logic
-                  Navigator.pushReplacementNamed(context, AppRoutes.mainLayout);
-                  print(
-                    isSignIn ? "Executing Sign In..." : "Executing Sign Up...",
-                  );
-                },
-              ),
-              const SizedBox(height: 32),
-
-              // 7. Social Logins
-              Center(
-                child: Text(
-                  isSignIn ? 'Or sign in with' : 'Or sign up with',
-                  style: AppStyles.bodyMedium(),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: SocialLoginButton(
-                      text: 'Facebook',
-                      iconPath: AppAssets.fbFacebook,
-                      onPressed: () => print('Facebook tapped'),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: SocialLoginButton(
-                      text: 'Google',
-                      iconPath: AppAssets.fbGoogle,
-                      onPressed: () => print('Google tapped'),
+                if (isSignIn) ...[
+                  const SizedBox(height: 48),
+                  Center(
+                    child: Column(
+                      children: [
+                        const Icon(
+                          Icons.fingerprint,
+                          color: AppColors.primary,
+                          size: 40,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Use fingerprint instead?',
+                          style: AppStyles.bodyMedium(),
+                        ),
+                      ],
                     ),
                   ),
                 ],
-              ),
-
-              // 8. Fingerprint Icon (ONLY shows on Sign In)
-              if (isSignIn) ...[
-                const SizedBox(height: 48),
-                Center(
-                  child: Column(
-                    children: [
-                      const Icon(
-                        Icons.fingerprint,
-                        color: AppColors.primary,
-                        size: 40,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Use fingerprint instead?',
-                        style: AppStyles.bodyMedium(),
-                      ),
-                    ],
-                  ),
-                ),
+                const SizedBox(height: 24),
               ],
-              const SizedBox(height: 24),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  // --- CUSTOM WIDGETS ---
-
-  // Builds the pill-shaped "Sign in / Sign up" toggle at the top
   Widget _buildAuthToggleTab() {
     return Container(
       height: 40,
       width: 200,
-      // Fixed width to match the Figma proportions
-      padding: EdgeInsets.all(4),
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface, // The background of the pill
+        color: AppColors.darkSurface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -264,21 +383,20 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  // Builds the individual clickable segments inside the toggle tab
   Widget _buildTabSegment({required String title, required AuthMode mode}) {
     final isActive = _authMode == mode;
 
     return Expanded(
       child: GestureDetector(
         onTap: () {
+          // Clear forms and errors when switching tabs
+          _formKey.currentState?.reset();
           setState(() {
             _authMode = mode;
           });
         },
         child: Container(
           decoration: BoxDecoration(
-            // Active tab gets a slightly lighter color to stand out,
-            // Inactive tab stays transparent to blend into the pill background
             color: isActive ? const Color(0xFF2A3038) : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
           ),

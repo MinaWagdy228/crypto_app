@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/AppAssets.dart';
 import '../../core/routing/AppRoutes.dart';
 import '../../core/theme/AppColors.dart';
-import '../onboarding/OnboardingContent.dart';
+// You might not need this import if you aren't using the OnboardingContent widget directly here
+// import '../onboarding/OnboardingContent.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,17 +18,23 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToNext();
+    _checkSessionAndNavigate();
   }
 
-  // Simulating the splash screen duration and MVVM routing logic
-  Future<void> _navigateToNext() async {
+  // Combines your splash duration with our MVVM/Session routing logic
+  Future<void> _checkSessionAndNavigate() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('IS_LOGGED_IN') ?? false;
+
     await Future.delayed(const Duration(milliseconds: 2500));
 
     if (!mounted) return;
 
-    // pushReplacement ensures the user can't swipe back to the splash screen!
-    Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, AppRoutes.mainLayout);
+    } else {
+      Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
+    }
   }
 
   @override
@@ -35,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: AppColors.darkBackground,
       body: Stack(
         children: [
-          // LAYER 1: The Constellation Background (without_logo.png)
+          // LAYER 1: The Constellation Background
           Positioned.fill(
             child: Image.asset(
               AppAssets.withoutLogo,
@@ -64,7 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
             right: 0,
             height: 80, // Exact height from your Figma properties
             child: Container(
-              decoration:  BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: AppColors.splashGradient,
               ),
             ),
