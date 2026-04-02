@@ -23,12 +23,14 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isEmailMethod = true; // Defaults to Email input
 
   // Controllers
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
+    _usernameController.dispose();
     _emailController.dispose();
     _mobileController.dispose();
     _passwordController.dispose();
@@ -64,53 +66,72 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
               const SizedBox(height: 32),
 
-              // 3. Dynamic Input Fields (Email vs Mobile)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _isEmailMethod ? 'Email' : 'Mobile Number',
-                    style: AppStyles.bodyMedium(),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isEmailMethod = !_isEmailMethod;
-                      });
-                    },
-                    child: Text(
-                      _isEmailMethod
-                          ? (isSignIn
-                                ? 'Sign in with mobile'
-                                : 'Register with mobile')
-                          : (isSignIn
-                                ? 'Sign in with email'
-                                : 'Register with email'),
-                      style: AppStyles.bodyMedium().copyWith(
-                        color: AppColors.primary,
+              // 3. Input Fields
+              if (isSignIn) ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _isEmailMethod ? 'Email' : 'Mobile Number',
+                      style: AppStyles.bodyMedium(),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isEmailMethod = !_isEmailMethod;
+                        });
+                      },
+                      child: Text(
+                        _isEmailMethod
+                            ? 'Sign in with mobile'
+                            : 'Sign in with email',
+                        style: AppStyles.bodyMedium().copyWith(
+                          color: AppColors.primary,
+                        ),
                       ),
                     ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                if (_isEmailMethod)
+                  CustomTextField(
+                    hintText: 'Enter your email',
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                  )
+                else
+                  CustomTextField(
+                    hintText: 'Enter your mobile',
+                    controller: _mobileController,
+                    keyboardType: TextInputType.phone,
                   ),
-                ],
-              ),
-              const SizedBox(height: 12),
+              ] else ...[
+                Text('Username', style: AppStyles.bodyMedium()),
+                const SizedBox(height: 12),
+                CustomTextField(
+                  hintText: 'Please enter username',
+                  controller: _usernameController,
+                  keyboardType: TextInputType.name,
+                ),
 
-              if (_isEmailMethod)
+                const SizedBox(height: 24),
+                Text('Mobile Number', style: AppStyles.bodyMedium()),
+                const SizedBox(height: 12),
                 CustomTextField(
-                  hintText: isSignIn
-                      ? 'Enter your email'
-                      : 'Please enter email',
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                )
-              else
-                CustomTextField(
-                  hintText: isSignIn
-                      ? 'Enter your mobile'
-                      : 'Please enter mobile',
+                  hintText: 'Please enter mobile',
                   controller: _mobileController,
                   keyboardType: TextInputType.phone,
                 ),
+
+                const SizedBox(height: 24),
+                Text('Email', style: AppStyles.bodyMedium()),
+                const SizedBox(height: 12),
+                CustomTextField(
+                  hintText: 'Please enter email',
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+              ],
 
               const SizedBox(height: 24),
 
@@ -143,7 +164,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 width: double.infinity,
                 onPressed: () {
                   // TODO: Connect to Auth ViewModel logic
-                  Navigator.pushReplacementNamed(context, AppRoutes.mainLayout);                  print(
+                  Navigator.pushReplacementNamed(context, AppRoutes.mainLayout);
+                  print(
                     isSignIn ? "Executing Sign In..." : "Executing Sign Up...",
                   );
                 },
