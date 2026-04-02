@@ -1,4 +1,4 @@
-import 'package:crypto_app/data/datasource/RemoteDataSourceImpl.dart';
+import 'package:crypto_app/data/datasource/remote/RemoteDataSourceImpl.dart';
 import 'package:crypto_app/features/home/widgets/ActionCard.dart';
 import 'package:crypto_app/features/home/widgets/CoinCard.dart'; // Assuming CoinData is here
 import 'package:crypto_app/features/home/widgets/CoinListSection.dart';
