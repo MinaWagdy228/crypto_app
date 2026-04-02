@@ -27,6 +27,8 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -34,6 +36,7 @@ class _AuthScreenState extends State<AuthScreen> {
     _emailController.dispose();
     _mobileController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -145,6 +148,17 @@ class _AuthScreenState extends State<AuthScreen> {
                 controller: _passwordController,
                 isPassword: true,
               ),
+
+              if (!isSignIn) ...[
+                const SizedBox(height: 24),
+                Text('Confirm Password', style: AppStyles.bodyMedium()),
+                const SizedBox(height: 12),
+                CustomTextField(
+                  hintText: 'Please confirm password',
+                  controller: _confirmPasswordController,
+                  isPassword: true,
+                ),
+              ],
 
               // 5. Forgot Password (ONLY shows on Sign In)
               if (isSignIn) ...[
