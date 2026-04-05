@@ -14,17 +14,11 @@ class AuthRepoImpl implements AuthRepo {
 
   @override
   Future<bool> loginUserByEmail(String email, String password) async {
+    if (!_validateEmail(email)) return false;
+
     final user = await localDataSource.getUserByEmail(email);
 
-    if (user == null) {
-      return false;
-    }
-
-    if (user.password == password) {
-      await localDataSource.saveLoginSession(true);
-      return true;
-    }
-    return false;
+    return _validateAndLogin(user, password);
   }
 
   @override
@@ -32,27 +26,43 @@ class AuthRepoImpl implements AuthRepo {
     String phoneNumber,
     String password,
   ) async {
+    if (!_validatePhoneNumber(phoneNumber)) return false;
+
     final user = await localDataSource.getUserByPhoneNumber(phoneNumber);
 
-    if (user == null) {
-      return false;
-    }
+    return _validateAndLogin(user, password);
+  }
 
-    if (user.password == password) {
+  Future<bool> _validateAndLogin(UserModel? user, String password) async {
+    if (user != null && _validatePassword(password, user.password)) {
       await localDataSource.saveLoginSession(true);
       return true;
     }
-
     return false;
   }
 
   @override
-  Future<bool?> isLoggedIn() async {
-    return await localDataSource.getIsLoggedIn();
+  Future<bool> isLoggedIn() async {
+    final result = await localDataSource.getIsLoggedIn();
+    return result ?? false;
   }
 
   @override
   Future<void> logoutUser() async {
     await localDataSource.saveLoginSession(false);
+  }
+
+  bool _validatePassword(String inputPassword, String storedPassword) {
+    return inputPassword == storedPassword;
+  }
+
+  bool _validateEmail(String email) {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return emailRegex.hasMatch(email);
+  }
+
+  bool _validatePhoneNumber(String phoneNumber) {
+    final phoneRegex = RegExp(r'^\d{10}$');
+    return phoneRegex.hasMatch(phoneNumber);
   }
 }
