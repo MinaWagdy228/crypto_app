@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/routing/AppRoutes.dart';
 import '../../core/theme/AppColors.dart';
 import '../../core/theme/AppStyles.dart';
-import '../../data/datasource/local/AuthLocalDataSourceImpl.dart';
+import '../../data/datasource/local/localDataSourceImpl.dart';
 import '../../data/model/UserModel.dart';
 import '../../data/repository/AuthRepo.dart';
 import '../../data/repository/AuthRepoImpl.dart';

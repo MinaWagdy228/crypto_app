@@ -4,10 +4,10 @@ import 'package:crypto_app/data/repository/CoinRepo.dart';
 import '../datasource/remote/RemoteDataSource.dart';
 import '../datasource/remote/RemoteDataSourceImpl.dart';
 
-class Coinrepoimpl implements Coinrepo {
+class CoinRepoImpl implements CoinRepo {
   late final RemoteDataSource remoteDataSource;
 
-  Coinrepoimpl() {
+  CoinRepoImpl() {
     remoteDataSource = Remotedatasourceimpl();
   }
 

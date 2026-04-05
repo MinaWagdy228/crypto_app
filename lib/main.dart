@@ -1,4 +1,7 @@
+import 'package:crypto_app/data/repository/CoinRepo.dart';
+import 'package:crypto_app/data/repository/CoinRepoImpl.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'core/routing/AppRoutes.dart';
 import 'core/routing/RouteGenerator.dart';
@@ -19,13 +22,16 @@ class CryptoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'tMinus1 Crypto',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true, fontFamily: 'NeueMontreal'),
+    return RepositoryProvider<CoinRepo>(
+      create: (context) => CoinRepoImpl(),
+      child: MaterialApp(
+        title: 'tMinus1 Crypto',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(useMaterial3: true, fontFamily: 'NeueMontreal'),
 
-      initialRoute: AppRoutes.splash,
-      onGenerateRoute: RouteGenerator.generateRoute,
+        initialRoute: AppRoutes.splash,
+        onGenerateRoute: RouteGenerator.generateRoute,
+      ),
     );
   }
 }

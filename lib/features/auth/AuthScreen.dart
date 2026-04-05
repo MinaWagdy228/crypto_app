@@ -8,7 +8,7 @@ import '../../core/theme/AppColors.dart';
 import '../../core/theme/AppStyles.dart';
 import '../../core/widgets/CustomTextField.dart';
 import '../../core/widgets/PrimaryButton.dart';
-import '../../data/datasource/local/AuthLocalDataSourceImpl.dart';
+import '../../data/datasource/local/localDataSourceImpl.dart';
 import '../../data/repository/AuthRepoImpl.dart';
 import 'widgets/SocialLoginButton.dart';
 
