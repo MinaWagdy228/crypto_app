@@ -1,8 +1,8 @@
-import 'package:crypto_app/data/model/CoinModel.dart';
 import 'package:crypto_app/data/repository/CoinRepo.dart';
 
 import '../datasource/remote/RemoteDataSource.dart';
 import '../datasource/remote/RemoteDataSourceImpl.dart';
+import '../model/MarketCoinModel.dart';
 
 class CoinRepoImpl implements CoinRepo {
   late final RemoteDataSource remoteDataSource;
@@ -12,7 +12,7 @@ class CoinRepoImpl implements CoinRepo {
   }
 
   @override
-  Future<List<CoinModel>> getTopCoins() {
+  Future<List<MarketCoinModel>> getTopCoins() {
     return remoteDataSource.getCoins();
   }
 }

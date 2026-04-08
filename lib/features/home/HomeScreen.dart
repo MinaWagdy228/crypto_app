@@ -27,14 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  String _getIconForSymbol(String symbol) {
-    if (symbol.contains('BTC')) return AppAssets.bitcoinBtc;
-    if (symbol.contains('ETH')) return AppAssets.bitcoinBtc;
-    if (symbol.contains('ADA')) return AppAssets.cardanoAda;
-    if (symbol.contains('SOL')) return AppAssets.solanaSol;
-    return AppAssets.bitcoinBtc;
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -141,20 +133,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
 
                             final apiCoins = coins.map((coin) {
-                              final formattedPrice = coin.lastPrice
+                              final formattedPrice = coin.currentPrice
                                   .toStringAsFixed(2);
-                              final prefix = coin.priceChangePercent > 0
+                              final prefix = coin.priceChangePercentage24h > 0
                                   ? '+'
                                   : '';
                               final formattedChange =
-                                  '$prefix${coin.priceChangePercent.toStringAsFixed(2)}%';
+                                  '$prefix${coin.priceChangePercentage24h.toStringAsFixed(2)}%';
 
                               return CoinData(
-                                pair: coin.symbol.replaceAll('USDT', '/USDT'),
+                                pair: '${coin.symbol.toUpperCase()}/USD',
                                 price: formattedPrice,
                                 change: formattedChange,
-                                iconPath: _getIconForSymbol(coin.symbol),
-                                isPositive: coin.priceChangePercent >= 0,
+                                iconPath: coin.image,
+                                isPositive: coin.priceChangePercentage24h >= 0,
                               );
                             }).toList();
 

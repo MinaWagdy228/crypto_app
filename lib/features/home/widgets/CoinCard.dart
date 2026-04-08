@@ -21,7 +21,6 @@ class CoinData {
   });
 }
 
-// 2. The Reusable Card Widget
 class CoinCard extends StatelessWidget {
   final CoinData coin;
 
@@ -30,10 +29,13 @@ class CoinCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Determine the theme color based on if the coin is up or down
-    final Color trendColor = coin.isPositive ? AppColors.primary : AppColors.error;
+    final Color trendColor = coin.isPositive
+        ? AppColors.primary
+        : AppColors.error;
 
     return Container(
-      width: 160, // Fixed width for horizontal scrolling cards
+      width: 160,
+      // Fixed width for horizontal scrolling cards
       margin: const EdgeInsets.only(right: 16.0),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -57,12 +59,19 @@ class CoinCard extends StatelessWidget {
             children: [
               Text(
                 coin.price,
-                style: AppStyles.titleMedium(color: trendColor).copyWith(fontSize: 18),
+                style: AppStyles.titleMedium(
+                  color: trendColor,
+                ).copyWith(fontSize: 18),
               ),
-              SvgPicture.asset(
+              Image.network(
                 coin.iconPath,
                 width: 24,
                 height: 24,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.monetization_on,
+                  color: AppColors.grey,
+                  size: 24,
+                ),
               ),
             ],
           ),
@@ -74,23 +83,26 @@ class CoinCard extends StatelessWidget {
             children: [
               Text(
                 coin.pair,
-                style: AppStyles.bodySmall(color: AppColors.black).copyWith(fontWeight: FontWeight.w600),
+                style: AppStyles.bodySmall(
+                  color: AppColors.black,
+                ).copyWith(fontWeight: FontWeight.w600),
               ),
-              Text(
-                coin.change,
-                style: AppStyles.bodySmall(color: trendColor),
-              ),
+              Text(coin.change, style: AppStyles.bodySmall(color: trendColor)),
             ],
           ),
 
-          const Spacer(), // Pushes the chart to the very bottom
+          const Spacer(),
+          // Pushes the chart to the very bottom
 
           // Row 3: Mini Sparkline Chart Placeholder (Using CustomPaint for a native feel)
           SizedBox(
             height: 30,
             width: double.infinity,
             child: CustomPaint(
-              painter: _MiniChartPainter(color: trendColor, isPositive: coin.isPositive),
+              painter: _MiniChartPainter(
+                color: trendColor,
+                isPositive: coin.isPositive,
+              ),
             ),
           ),
         ],
@@ -119,12 +131,16 @@ class _MiniChartPainter extends CustomPainter {
 
     // Draw a simple bezier curve to simulate market movement
     path.quadraticBezierTo(
-        size.width * 0.25, size.height * (isPositive ? 0.2 : 0.8),
-        size.width * 0.5, size.height * 0.5
+      size.width * 0.25,
+      size.height * (isPositive ? 0.2 : 0.8),
+      size.width * 0.5,
+      size.height * 0.5,
     );
     path.quadraticBezierTo(
-        size.width * 0.75, size.height * (isPositive ? 0.8 : 0.2),
-        size.width, size.height * (isPositive ? 0.1 : 0.9)
+      size.width * 0.75,
+      size.height * (isPositive ? 0.8 : 0.2),
+      size.width,
+      size.height * (isPositive ? 0.1 : 0.9),
     );
 
     canvas.drawPath(path, paint);

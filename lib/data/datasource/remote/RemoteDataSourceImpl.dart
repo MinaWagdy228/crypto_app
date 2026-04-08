@@ -1,28 +1,34 @@
 import 'package:crypto_app/core/constants/ApiConstants.dart';
 import 'package:crypto_app/core/network/DioHelper.dart';
-import 'package:crypto_app/data/model/CoinModel.dart';
+import 'package:crypto_app/data/model/MarketCoinModel.dart';
 
-import '../../model/MarketCoinModel.dart';
 import 'RemoteDataSource.dart';
 
 class RemoteDataSourceImpl implements RemoteDataSource  {
   late final DioHelper dioHelper;
+
   RemoteDataSourceImpl(){
     dioHelper = DioHelper();
   }
 
   @override
-  Future<List<CoinModel>> getCoins() async{
-    final response = await dioHelper.get(path: ApiConstants.ticker24hr,
-    queryParameters: {
-      'symbols': '["BTCUSDT","ETHUSDT","BNBUSDT","ADAUSDT","XRPUSDT"]'
-    }
+  Future<List<MarketCoinModel>> getCoins() async {
+    final response = await dioHelper.get(
+        path: ApiConstants.coinGeckoBaseUrl + ApiConstants.coinGeckoMarkets,
+        queryParameters: {
+          'vs_currency': 'usd',
+          'order': 'market_cap_desc',
+          'per_page': 5,
+          'page': 1,
+          'sparkline': false,
+        }
     );
+
     if (response.statusCode == 200) {
       final List<dynamic> data = response.data;
-      return data.map((json) => CoinModel.fromJson(json)).toList();
+      return data.map((json) => MarketCoinModel.fromJson(json)).toList();
     } else {
-      throw Exception('Failed to load coins');
+      throw Exception('Failed to load top coins');
     }
   }
 }

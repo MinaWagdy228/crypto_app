@@ -1,5 +1,6 @@
-import 'package:crypto_app/data/model/CoinModel.dart';
+
+import '../../model/MarketCoinModel.dart';
 
 abstract class RemoteDataSource {
-  Future<List<CoinModel>> getCoins();
+  Future<List<MarketCoinModel>> getCoins();
 }

@@ -1,11 +1,11 @@
-import '../../../data/model/CoinModel.dart';
+import '../../../data/model/MarketCoinModel.dart';
 
 abstract class CoinStates {}
 
 class CoinLoadingState extends CoinStates {}
 
 class CoinSuccessState extends CoinStates {
-  final List<CoinModel> coins;
+  final List<MarketCoinModel> coins;
 
   CoinSuccessState(this.coins);
 }

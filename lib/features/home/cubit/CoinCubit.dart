@@ -11,7 +11,7 @@ class CoinCubit extends Cubit<CoinStates> {
   void fetchTopCoins() async {
     emit(CoinLoadingState());
     try {
-      var coins = await (coinRepo.getTopCoins());
+      final coins = await (coinRepo.getTopCoins());
       emit(CoinSuccessState(coins));
     } catch (e) {
       emit(CoinErrorState(e.toString()));
