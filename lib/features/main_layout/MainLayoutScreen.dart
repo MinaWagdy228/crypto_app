@@ -3,9 +3,11 @@ import 'package:crypto_app/features/main_layout/widgets/CustomBottomNavBar.dart'
 import 'package:crypto_app/features/market/MarketScreen.dart';
 import 'package:crypto_app/features/settings/SettingsScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/theme/AppColors.dart';
 import '../wallet/WalletScreen.dart';
+import '../wallet/cubit/WalletCubit.dart';
 
 class MainLayoutScreen extends StatefulWidget {
   const MainLayoutScreen({super.key});
@@ -35,6 +37,9 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
       setState(() {
         _currentIndex = index;
       });
+    }
+    if (index == 3) {
+      context.read<WalletCubit>().loadFavorites();
     }
   }
 
