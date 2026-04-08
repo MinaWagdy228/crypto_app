@@ -6,11 +6,11 @@ class MarketInitialState extends MarketStates {}
 
 class MarketLoadingState extends MarketStates {}
 
-class MarketLoadedState extends MarketStates {
+class MarketSuccessState extends MarketStates {
   final List<MarketCoinModel> coins;
-  final List<String> favoriteCoinIds; // Keeps track of which hearts to fill!
+  final List<String> favoriteCoinIds;
 
-  MarketLoadedState({
+  MarketSuccessState({
     required this.coins,
     required this.favoriteCoinIds,
   });

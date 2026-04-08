@@ -26,7 +26,7 @@ class MarketCubit extends Cubit<MarketStates> {
       await marketRepo.toggleFavorite(coin);
 
 
-      if (state is MarketLoadedState) {
+      if (state is MarketSuccessState) {
         _emitLoadedState();
       }
     } catch (e) {
@@ -40,7 +40,7 @@ class MarketCubit extends Cubit<MarketStates> {
         .map((coin) => coin.id)
         .toList();
 
-    emit(MarketLoadedState(
+    emit(MarketSuccessState(
       coins: _currentCoins,
       favoriteCoinIds: favoriteIds,
     ));

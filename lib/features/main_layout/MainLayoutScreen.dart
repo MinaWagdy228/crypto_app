@@ -5,6 +5,7 @@ import 'package:crypto_app/features/settings/SettingsScreen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/AppColors.dart';
+import '../wallet/WalletScreen.dart';
 
 class MainLayoutScreen extends StatefulWidget {
   const MainLayoutScreen({super.key});
@@ -24,9 +25,7 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
     const Center(
       child: Text('Activity', style: TextStyle(color: Colors.white)),
     ),
-    const Center(
-      child: Text('Wallet', style: TextStyle(color: Colors.white)),
-    ),
+    const WalletScreen(),
     const SettingsScreen(),
   ];
 

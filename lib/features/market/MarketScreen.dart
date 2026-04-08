@@ -66,7 +66,7 @@ class _MarketScreenState extends State<MarketScreen> {
                     );
                   }
 
-                  if (state is MarketLoadedState) {
+                  if (state is MarketSuccessState) {
                     final coins = state.coins;
 
                     if (coins.isEmpty) {
