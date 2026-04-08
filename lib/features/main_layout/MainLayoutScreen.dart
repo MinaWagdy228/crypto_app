@@ -17,10 +17,8 @@ class MainLayoutScreen extends StatefulWidget {
 }
 
 class _MainLayoutScreenState extends State<MainLayoutScreen> {
-  // 1. Local state for the selected tab
   int _currentIndex = 0;
 
-  // 2. The screens corresponding to the tabs
   final List<Widget> _screens = [
     const HomeScreen(),
     const MarketScreen(),
@@ -31,7 +29,6 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
     const SettingsScreen(),
   ];
 
-  // 3. Simple state update method
   void _onTabTapped(int index) {
     if (_currentIndex != index) {
       setState(() {

@@ -25,4 +25,13 @@ class MarketLocalDataSourceImpl implements MarketLocalDataSource {
   bool isFavorite(String coinId) {
     return favoritesBox.containsKey(coinId);
   }
+
+  @override
+  Future<void> updateFavorites(List<MarketCoinModel> coins) async {
+    for (var coin in coins) {
+      if (favoritesBox.containsKey(coin.id)) {
+        await favoritesBox.put(coin.id, coin);
+      }
+    }
+  }
 }

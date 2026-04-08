@@ -37,4 +37,14 @@ class MarketRepoImpl implements MarketRepo {
   Future<List<SearchCoinModel>> searchCoins(String query) {
     return remoteDataSource.searchCoins(query);
   }
+
+  @override
+  Future<List<MarketCoinModel>> getCoinsByIds(List<String> ids) {
+    return remoteDataSource.getCoinsByIds(ids);
+  }
+
+  @override
+  Future<void> updateFavorites(List<MarketCoinModel> coins) async {
+    await localDataSource.updateFavorites(coins);
+  }
 }

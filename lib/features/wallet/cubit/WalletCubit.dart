@@ -9,11 +9,25 @@ class WalletCubit extends Cubit<WalletStates> {
 
   Future<void> loadFavorites() async {
     emit(WalletLoadingState());
+
     try {
-      final favorites = await marketRepo.getFavoriteCoins();
-      emit(WalletSuccessState(favorites));
+      final localFavorites = await marketRepo.getFavoriteCoins();
+
+      if (localFavorites.isEmpty) {
+        emit(WalletSuccessState([]));
+        return;
+      }
+
+      emit(WalletSuccessState(localFavorites));
+
+      final ids = localFavorites.map((c) => c.id).toList();
+      final liveCoins = await marketRepo.getCoinsByIds(ids);
+
+      await marketRepo.updateFavorites(liveCoins);
+
+      emit(WalletSuccessState(liveCoins));
     } catch (e) {
-      emit(WalletErrorState(e.toString()));
+      print("Could not fetch live prices: $e");
     }
   }
 }

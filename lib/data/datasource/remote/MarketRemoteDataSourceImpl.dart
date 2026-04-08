@@ -47,4 +47,24 @@ class MarketRemoteDataSourceImpl implements MarketRemoteDataSource {
       throw Exception('Failed to search coins');
     }
   }
+
+  @override
+  Future<List<MarketCoinModel>> getCoinsByIds(List<String> ids) async {
+    if (ids.isEmpty) return [];
+
+    final response = await dioHelper.get(
+      path: ApiConstants.coinGeckoBaseUrl + ApiConstants.coinGeckoMarkets,
+      queryParameters: {
+        'vs_currency': 'usd',
+        'ids': ids.join(','),
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = response.data;
+      return data.map((json) => MarketCoinModel.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to fetch specific coins');
+    }
+  }
 }
