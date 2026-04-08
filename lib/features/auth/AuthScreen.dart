@@ -5,12 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/constants/AppAssets.dart';
 import '../../core/theme/AppColors.dart';
 import '../../core/theme/AppStyles.dart';
+import '../../core/utils/AppValidators.dart'; // <-- Import our new Utility
 import '../../core/widgets/CustomTextField.dart';
 import '../../core/widgets/PrimaryButton.dart';
 import 'widgets/SocialLoginButton.dart';
 import '../../data/model/UserModel.dart';
 
-// Import our Cubit and States
 import 'cubit/UserCubit.dart';
 import 'cubit/UserStates.dart';
 
@@ -45,7 +45,6 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
-
   void _handleSignUp(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       final user = UserModel(
@@ -72,14 +71,6 @@ class _AuthScreenState extends State<AuthScreen> {
         );
       }
     }
-  }
-
-  bool _isValidEmail(String email) {
-    return RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email);
-  }
-
-  bool _isValidPhoneNumber(String phone) {
-    return RegExp(r'^\d{10}$').hasMatch(phone);
   }
 
   @override
@@ -162,18 +153,22 @@ class _AuthScreenState extends State<AuthScreen> {
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) return 'Email is required';
-                            if (!_isValidEmail(value)) return 'Enter a valid email address';
+                            // Use shared utility!
+                            if (!AppValidators.isValidEmail(value)) return 'Enter a valid email address';
                             return null;
                           },
                         )
                       else
                         CustomTextField(
-                          hintText: 'Enter your 10-digit mobile',
+                          hintText: 'e.g. 010xxxxxxxx',
                           controller: _mobileController,
                           keyboardType: TextInputType.phone,
                           validator: (value) {
                             if (value == null || value.isEmpty) return 'Mobile is required';
-                            if (!_isValidPhoneNumber(value)) return 'Enter exactly 10 digits';
+                            // Use shared utility!
+                            if (!AppValidators.isValidPhoneNumber(value)) {
+                              return 'Enter a valid number starting with 010, 011, 012, or 015';
+                            }
                             return null;
                           },
                         ),
@@ -191,12 +186,15 @@ class _AuthScreenState extends State<AuthScreen> {
                       Text('Mobile Number', style: AppStyles.bodyMedium()),
                       const SizedBox(height: 12),
                       CustomTextField(
-                        hintText: 'Please enter 10-digit mobile',
+                        hintText: 'e.g. 010xxxxxxxx',
                         controller: _mobileController,
                         keyboardType: TextInputType.phone,
                         validator: (value) {
                           if (value == null || value.isEmpty) return 'Mobile is required';
-                          if (!_isValidPhoneNumber(value)) return 'Enter exactly 10 digits';
+                          // Use shared utility!
+                          if (!AppValidators.isValidPhoneNumber(value)) {
+                            return 'Enter a valid number starting with 010, 011, 012, or 015';
+                          }
                           return null;
                         },
                       ),
@@ -210,7 +208,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value == null || value.isEmpty) return 'Email is required';
-                          if (!_isValidEmail(value)) return 'Enter a valid email address';
+                          // Use shared utility!
+                          if (!AppValidators.isValidEmail(value)) return 'Enter a valid email address';
                           return null;
                         },
                       ),

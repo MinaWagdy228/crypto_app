@@ -2,11 +2,12 @@ import 'package:crypto_app/core/constants/ApiConstants.dart';
 import 'package:crypto_app/core/network/DioHelper.dart';
 import 'package:crypto_app/data/model/CoinModel.dart';
 
+import '../../model/MarketCoinModel.dart';
 import 'RemoteDataSource.dart';
 
-class Remotedatasourceimpl implements RemoteDataSource  {
+class RemoteDataSourceImpl implements RemoteDataSource  {
   late final DioHelper dioHelper;
-  Remotedatasourceimpl(){
+  RemoteDataSourceImpl(){
     dioHelper = DioHelper();
   }
 

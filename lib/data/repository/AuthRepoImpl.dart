@@ -1,9 +1,10 @@
-import 'package:crypto_app/data/datasource/local/localDataSource.dart';
+import 'package:crypto_app/core/utils/AppValidators.dart';
+import 'package:crypto_app/data/datasource/local/LocalDataSource.dart';
 import 'package:crypto_app/data/model/UserModel.dart';
 import 'AuthRepo.dart';
 
 class AuthRepoImpl implements AuthRepo {
-  final AuthLocalDataSource localDataSource;
+  final LocalDataSource localDataSource;
 
   AuthRepoImpl({required this.localDataSource});
 
@@ -14,7 +15,7 @@ class AuthRepoImpl implements AuthRepo {
 
   @override
   Future<bool> loginUserByEmail(String email, String password) async {
-    if (!_validateEmail(email)) return false;
+    if (!AppValidators.isValidEmail(email)) return false;
 
     final user = await localDataSource.getUserByEmail(email);
 
@@ -26,7 +27,7 @@ class AuthRepoImpl implements AuthRepo {
     String phoneNumber,
     String password,
   ) async {
-    if (!_validatePhoneNumber(phoneNumber)) return false;
+    if (!AppValidators.isValidPhoneNumber(phoneNumber)) return false;
 
     final user = await localDataSource.getUserByPhoneNumber(phoneNumber);
 
@@ -34,7 +35,8 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   Future<bool> _validateAndLogin(UserModel? user, String password) async {
-    if (user != null && _validatePassword(password, user.password)) {
+    if (user != null &&
+        AppValidators.isValidPassword(password, user.password)) {
       await localDataSource.saveLoginSession(true);
       await localDataSource.saveLoggedInUserKey(user.email);
       return true;
@@ -51,20 +53,6 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<void> logoutUser() async {
     await localDataSource.saveLoginSession(false);
-  }
-
-  bool _validatePassword(String inputPassword, String storedPassword) {
-    return inputPassword == storedPassword;
-  }
-
-  bool _validateEmail(String email) {
-    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-    return emailRegex.hasMatch(email);
-  }
-
-  bool _validatePhoneNumber(String phoneNumber) {
-    final phoneRegex = RegExp(r'^\d{11}$');
-    return phoneRegex.hasMatch(phoneNumber);
   }
 
   @override

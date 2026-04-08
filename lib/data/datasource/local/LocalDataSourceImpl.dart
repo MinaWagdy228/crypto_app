@@ -1,13 +1,15 @@
-import 'package:crypto_app/data/datasource/local/localDataSource.dart';
+import 'package:crypto_app/data/datasource/local/LocalDataSource.dart';
 import 'package:crypto_app/data/model/UserModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive/hive.dart';
 
-class AuthLocalDataSourceImpl implements AuthLocalDataSource {
+import '../../model/MarketCoinModel.dart';
+
+class LocalDataSourceImpl implements LocalDataSource {
   final Box<UserModel> box;
   final SharedPreferences sharedPreferences;
 
-  AuthLocalDataSourceImpl({required this.box, required this.sharedPreferences});
+  LocalDataSourceImpl({ required this.box, required this.sharedPreferences});
 
   @override
   Future<bool?> getIsLoggedIn() async {

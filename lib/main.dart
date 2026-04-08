@@ -1,61 +1,80 @@
+import 'package:crypto_app/core/constants/HiveConstants.dart';
+import 'package:crypto_app/data/datasource/remote/RemoteDataSourceImpl.dart';
 import 'package:crypto_app/data/repository/CoinRepo.dart';
 import 'package:crypto_app/data/repository/CoinRepoImpl.dart';
 import 'package:crypto_app/data/repository/AuthRepo.dart';
 import 'package:crypto_app/data/repository/AuthRepoImpl.dart';
-import 'package:crypto_app/data/datasource/local/localDataSourceImpl.dart';
+import 'package:crypto_app/data/datasource/local/LocalDataSourceImpl.dart';
 import 'package:crypto_app/features/auth/cubit/UserCubit.dart';
+import 'package:crypto_app/features/market/cubit/MarketCubit.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/network/DioHelper.dart';
 import 'core/routing/AppRoutes.dart';
 import 'core/routing/RouteGenerator.dart';
+import 'data/datasource/local/MarketLocalDataSourceImpl.dart';
+import 'data/datasource/remote/MarketRemoteDataSourceImpl.dart';
+import 'data/model/MarketCoinModel.dart';
 import 'data/model/UserModel.dart';
+import 'data/repository/MarketRepo.dart';
+import 'data/repository/MarketRepoImpl.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
   Hive.registerAdapter(UserModelAdapter());
-  final userBox = await Hive.openBox<UserModel>('userBox');
+  final userBox = await Hive.openBox<UserModel>(HiveConstants.userBox);
+
+  Hive.registerAdapter(MarketCoinModelAdapter());
+  final favoriteBox = await Hive.openBox<MarketCoinModel>(
+    HiveConstants.favoritesBox,
+  );
 
   final prefs = await SharedPreferences.getInstance();
 
-  final authLocalDataSource = AuthLocalDataSourceImpl(
+  final authLocalDataSource = LocalDataSourceImpl(
     box: userBox,
     sharedPreferences: prefs,
   );
   final authRepo = AuthRepoImpl(localDataSource: authLocalDataSource);
+  final marketLocalDataSource = MarketLocalDataSourceImpl(
+    favoritesBox: favoriteBox,
+  );
+  final marketRepo = MarketRepoImpl(
+    localDataSource: marketLocalDataSource,
+    remoteDataSource: MarketRemoteDataSourceImpl(),
+  );
 
-  runApp(CryptoApp(authRepo: authRepo));
+  runApp(CryptoApp(authRepo: authRepo, marketRepo: marketRepo));
 }
 
 class CryptoApp extends StatelessWidget {
   final AuthRepo authRepo;
+  final MarketRepo marketRepo;
 
   const CryptoApp({
     super.key,
     required this.authRepo,
+    required this.marketRepo,
   });
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<CoinRepo>(
-          create: (context) => CoinRepoImpl(),
-        ),
-        RepositoryProvider<AuthRepo>.value(
-          value: authRepo,
-        ),
+        RepositoryProvider<CoinRepo>(create: (context) => CoinRepoImpl()),
+        RepositoryProvider<AuthRepo>.value(value: authRepo),
+        RepositoryProvider<MarketRepo>.value(value: marketRepo),
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<UserCubit>(
-            create: (context) => UserCubit(authRepo),
-          ),
+          BlocProvider<UserCubit>(create: (context) => UserCubit(authRepo)),
+          BlocProvider<MarketCubit>(create: (context) => MarketCubit(marketRepo: marketRepo)),
         ],
         child: MaterialApp(
           title: 'tMinus1 Crypto',

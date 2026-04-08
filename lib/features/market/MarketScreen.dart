@@ -1,12 +1,13 @@
-import 'package:crypto_app/core/routing/AppRoutes.dart';
-import 'package:crypto_app/features/market/widgets/MarketCoinTile.dart';
-import 'package:crypto_app/features/market/widgets/MarketTabBar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/constants/AppAssets.dart';
+import '../../../../core/routing/AppRoutes.dart';
 import '../../../../core/theme/AppColors.dart';
-import '../../../../core/theme/AppStyles.dart';
 import '../../core/widgets/CustomAppBar.dart';
+import 'cubit/MarketCubit.dart';
+import 'cubit/MarketStates.dart';
+import 'widgets/MarketCoinTile.dart';
+import 'widgets/MarketTabBar.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
@@ -16,7 +17,13 @@ class MarketScreen extends StatefulWidget {
 }
 
 class _MarketScreenState extends State<MarketScreen> {
-  int _selectedTabIndex = 1; // "Spot" is selected by default in Figma
+  int _selectedTabIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<MarketCubit>().fetchMarketData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +32,6 @@ class _MarketScreenState extends State<MarketScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // 1. Reused App Bar from Home Feature
             HomeAppBar(
               onAvatarTapped: () => Navigator.pushNamed(context, AppRoutes.profile),
               onSearchTapped: () => print('Search Tapped'),
@@ -33,7 +39,6 @@ class _MarketScreenState extends State<MarketScreen> {
               onNotifTapped: () => print('Notif Tapped'),
             ),
 
-            // 2. The Custom Tab Bar
             MarketTabBar(
               selectedIndex: _selectedTabIndex,
               onTabTapped: (index) {
@@ -42,103 +47,61 @@ class _MarketScreenState extends State<MarketScreen> {
             ),
             const SizedBox(height: 24),
 
-            // 3. The Scrolling Coin List
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                children: [
-                  const MarketCoinTile(
-                    name: 'Bitcoin',
-                    symbol: 'BTC',
-                    price: '32,697.05',
-                    change: '+0.81%',
-                    iconPath: AppAssets.bitcoinBtc,
-                    isPositive: true,
-                  ),
-                  const MarketCoinTile(
-                    name: 'Chainlink',
-                    symbol: 'LINK',
-                    price: '32,697.05',
-                    change: '-0.81%',
-                    iconPath: AppAssets.statusSnt,
-                    isPositive: false, // Placeholder icon
-                  ),
-                  const MarketCoinTile(
-                    name: 'Cardano',
-                    symbol: 'ADA',
-                    price: '32,697.05',
-                    change: '+0.81%',
-                    iconPath: AppAssets.cardanoAda,
-                    isPositive: true,
-                  ),
-                  const MarketCoinTile(
-                    name: 'SHIBA INU',
-                    symbol: 'SHIB',
-                    price: '32,697.05',
-                    change: '-0.81%',
-                    iconPath: AppAssets.shibaInuShib,
-                    isPositive: false,
-                  ),
-                  const MarketCoinTile(
-                    name: 'HIFI',
-                    symbol: 'MFT',
-                    price: '32,697.05',
-                    change: '-0.81%',
-                    iconPath: AppAssets.hifiFinanceMft,
-                    isPositive: false,
-                  ),
-                  const MarketCoinTile(
-                    name: 'REN',
-                    symbol: 'REN',
-                    price: '32,697.05',
-                    change: '+0.81%',
-                    iconPath: AppAssets.renRen,
-                    isPositive: true,
-                  ),
+              child: BlocBuilder<MarketCubit, MarketStates>(
+                builder: (context, state) {
+                  if (state is MarketLoadingState || state is MarketInitialState) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: AppColors.primary),
+                    );
+                  }
 
-                  const SizedBox(height: 16),
-
-                  // 4. "Add Favorite" Button
-                  GestureDetector(
-                    onTap: () => print('Add Favorite tapped'),
-                    child: CustomPaint(
-                      painter: _DashedBorderPainter(
-                        color: AppColors.darkSurface,
+                  if (state is MarketErrorState) {
+                    return Center(
+                      child: Text(
+                        'Failed to load market data: ${state.errorMessage}',
+                        style: const TextStyle(color: Colors.redAccent),
+                        textAlign: TextAlign.center,
                       ),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: AppColors.darkSurface,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.add,
-                                color: AppColors.grey,
-                                size: 16,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Add Favorite',
-                              style: AppStyles.bodyMedium(
-                                color: AppColors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                    );
+                  }
 
-                  // Padding so the bottom nav bar doesn't cover the last item
-                  const SizedBox(height: 120),
-                ],
+                  if (state is MarketLoadedState) {
+                    final coins = state.coins;
+
+                    if (coins.isEmpty) {
+                      return const Center(
+                        child: Text('No coins found.', style: TextStyle(color: Colors.white)),
+                      );
+                    }
+
+                    return RefreshIndicator(
+                      color: AppColors.primary,
+                      backgroundColor: AppColors.darkSurface,
+                      onRefresh: () async {
+                        await context.read<MarketCubit>().fetchMarketData();
+                      },
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        itemCount: coins.length,
+                        itemBuilder: (context, index) {
+                          final coin = coins[index];
+                          final isFavorite = state.favoriteCoinIds.contains(coin.id);
+
+                          return MarketCoinTile(
+                            coin: coin,
+                            isFavorite: isFavorite,
+                            onFavoriteTapped: () {
+                              context.read<MarketCubit>().toggleFavorite(coin);
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  }
+
+                  return const SizedBox.shrink();
+                },
               ),
             ),
           ],
@@ -146,42 +109,4 @@ class _MarketScreenState extends State<MarketScreen> {
       ),
     );
   }
-}
-
-// A simple painter to draw a dashed rounded rectangle
-class _DashedBorderPainter extends CustomPainter {
-  final Color color;
-
-  _DashedBorderPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    const double dashWidth = 8;
-    const double dashSpace = 6;
-    final RRect rrect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      const Radius.circular(16),
-    );
-
-    // We use a PathMetric to accurately draw dashes around rounded corners
-    final Path path = Path()..addRRect(rrect);
-    for (final metric in path.computeMetrics()) {
-      double distance = 0;
-      while (distance < metric.length) {
-        canvas.drawPath(
-          metric.extractPath(distance, distance + dashWidth),
-          paint,
-        );
-        distance += dashWidth + dashSpace;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

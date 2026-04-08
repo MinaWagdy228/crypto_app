@@ -1,14 +1,15 @@
 import 'package:crypto_app/core/constants/AppAssets.dart';
+import 'package:crypto_app/data/model/MarketCoinModel.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../core/constants/HiveConstants.dart';
 import '../../core/routing/AppRoutes.dart';
 import '../../core/theme/AppColors.dart';
 import '../../core/theme/AppStyles.dart';
-import '../../data/datasource/local/localDataSourceImpl.dart';
+import '../../data/datasource/local/LocalDataSourceImpl.dart';
 import '../../data/model/UserModel.dart';
-import '../../data/repository/AuthRepo.dart';
 import '../../data/repository/AuthRepoImpl.dart';
 import 'widgets/SettingsTile.dart';
 
@@ -26,9 +27,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _isLoggingOut = true);
     try {
       final prefs = await SharedPreferences.getInstance();
-      final box = Hive.box<UserModel>('userBox');
+      final box = Hive.box<UserModel>(HiveConstants.userBox);
       final repo = AuthRepoImpl(
-        localDataSource: AuthLocalDataSourceImpl(
+        localDataSource: LocalDataSourceImpl(
           box: box,
           sharedPreferences: prefs,
         ),

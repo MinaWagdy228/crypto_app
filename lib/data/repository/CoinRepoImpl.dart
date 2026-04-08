@@ -8,7 +8,7 @@ class CoinRepoImpl implements CoinRepo {
   late final RemoteDataSource remoteDataSource;
 
   CoinRepoImpl() {
-    remoteDataSource = Remotedatasourceimpl();
+    remoteDataSource = RemoteDataSourceImpl();
   }
 
   @override

@@ -31,14 +31,12 @@ class MarketCoinModel {
     required this.priceChangePercentage24h,
   });
 
-  // Factory constructor to parse CoinGecko JSON
   factory MarketCoinModel.fromJson(Map<String, dynamic> json) {
     return MarketCoinModel(
       id: json['id'] ?? '',
       symbol: (json['symbol'] ?? '').toString().toUpperCase(),
       name: json['name'] ?? '',
       image: json['image'] ?? '',
-      // Use .toDouble() to prevent casting errors if the API returns an int (e.g., 68601 instead of 68601.0)
       currentPrice: (json['current_price'] ?? 0).toDouble(),
       priceChangePercentage24h: (json['price_change_percentage_24h'] ?? 0).toDouble(),
     );
