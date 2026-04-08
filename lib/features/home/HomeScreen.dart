@@ -1,4 +1,3 @@
-import 'package:crypto_app/data/datasource/remote/RemoteDataSourceImpl.dart';
 import 'package:crypto_app/features/home/cubit/CoinStates.dart';
 import 'package:crypto_app/features/home/widgets/ActionCard.dart';
 import 'package:crypto_app/features/home/widgets/CoinCard.dart'; // Assuming CoinData is here
@@ -9,13 +8,10 @@ import 'package:crypto_app/features/home/widgets/QuickActionsGrid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/network/DioHelper.dart';
 import '../../../core/theme/AppColors.dart';
 import '../../core/constants/AppAssets.dart';
 import '../../core/routing/AppRoutes.dart';
 import '../../data/repository/CoinRepo.dart';
-import '../../data/repository/CoinRepoImpl.dart';
-import '../../data/model/CoinModel.dart';
 import 'cubit/CoinCubit.dart';
 
 class HomeScreen extends StatefulWidget {

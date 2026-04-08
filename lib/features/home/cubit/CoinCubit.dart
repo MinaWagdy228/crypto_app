@@ -1,4 +1,3 @@
-import 'package:crypto_app/data/model/CoinModel.dart';
 import 'package:crypto_app/features/home/cubit/CoinStates.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:crypto_app/data/repository/CoinRepo.dart';
