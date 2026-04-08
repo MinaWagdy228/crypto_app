@@ -8,7 +8,7 @@ import '../../core/constants/HiveConstants.dart';
 import '../../core/routing/AppRoutes.dart';
 import '../../core/theme/AppColors.dart';
 import '../../core/theme/AppStyles.dart';
-import '../../data/datasource/local/LocalDataSourceImpl.dart';
+import '../../data/datasource/local/AuthLocalDataSourceImpl.dart';
 import '../../data/model/UserModel.dart';
 import '../../data/repository/AuthRepoImpl.dart';
 import 'widgets/SettingsTile.dart';
@@ -29,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final prefs = await SharedPreferences.getInstance();
       final box = Hive.box<UserModel>(HiveConstants.userBox);
       final repo = AuthRepoImpl(
-        localDataSource: LocalDataSourceImpl(
+        localDataSource: AuthLocalDataSourceImpl(
           box: box,
           sharedPreferences: prefs,
         ),

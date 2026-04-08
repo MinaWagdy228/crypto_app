@@ -30,12 +30,12 @@ class SearchCoinTile extends StatelessWidget {
           ClipOval(
             child: Image.network(
               coin.thumb,
-              width: 40,
-              height: 40,
+              width: 48,
+              height: 48,
               errorBuilder: (context, error, stackTrace) => const Icon(
                 Icons.monetization_on,
                 color: AppColors.grey,
-                size: 40,
+                size: 64,
               ),
             ),
           ),

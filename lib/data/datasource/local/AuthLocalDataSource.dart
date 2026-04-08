@@ -1,7 +1,7 @@
 import 'package:crypto_app/data/model/UserModel.dart';
 
 
-abstract class LocalDataSource {
+abstract class AuthLocalDataSource {
   // Hive Database
   Future<void> saveUser(UserModel user);
   Future<UserModel?> getUserByEmail(String email);

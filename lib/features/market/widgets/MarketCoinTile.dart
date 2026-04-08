@@ -30,7 +30,6 @@ class MarketCoinTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // 1. Coin Image from CoinGecko
           ClipOval(
             child: Image.network(
               coin.image,

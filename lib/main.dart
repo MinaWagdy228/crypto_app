@@ -1,11 +1,12 @@
 import 'package:crypto_app/core/constants/HiveConstants.dart';
-import 'package:crypto_app/data/datasource/remote/RemoteDataSourceImpl.dart';
-import 'package:crypto_app/data/repository/CoinRepo.dart';
-import 'package:crypto_app/data/repository/CoinRepoImpl.dart';
+import 'package:crypto_app/data/datasource/remote/HomeRemoteDataSourceImpl.dart';
+import 'package:crypto_app/data/repository/HomeRepo.dart';
+import 'package:crypto_app/data/repository/HomeRepoImpl.dart';
 import 'package:crypto_app/data/repository/AuthRepo.dart';
 import 'package:crypto_app/data/repository/AuthRepoImpl.dart';
-import 'package:crypto_app/data/datasource/local/LocalDataSourceImpl.dart';
+import 'package:crypto_app/data/datasource/local/AuthLocalDataSourceImpl.dart';
 import 'package:crypto_app/features/auth/cubit/UserCubit.dart';
+import 'package:crypto_app/features/home/cubit/HomeCubit.dart';
 import 'package:crypto_app/features/market/cubit/MarketCubit.dart';
 import 'package:crypto_app/features/search/cubit/SearchCubit.dart';
 import 'package:crypto_app/features/wallet/cubit/WalletCubit.dart';
@@ -39,7 +40,7 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
 
-  final authLocalDataSource = LocalDataSourceImpl(
+  final authLocalDataSource = AuthLocalDataSourceImpl(
     box: userBox,
     sharedPreferences: prefs,
   );
@@ -51,11 +52,14 @@ void main() async {
     localDataSource: marketLocalDataSource,
     remoteDataSource: MarketRemoteDataSourceImpl(),
   );
-
-  runApp(CryptoApp(authRepo: authRepo, marketRepo: marketRepo));
+  final homeRepo = HomeRepoImpl();
+  runApp(
+    CryptoApp(authRepo: authRepo, marketRepo: marketRepo, homeRepo: homeRepo),
+  );
 }
 
 class CryptoApp extends StatelessWidget {
+  final HomeRepo homeRepo;
   final AuthRepo authRepo;
   final MarketRepo marketRepo;
 
@@ -63,22 +67,32 @@ class CryptoApp extends StatelessWidget {
     super.key,
     required this.authRepo,
     required this.marketRepo,
+    required this.homeRepo,
   });
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<CoinRepo>(create: (context) => CoinRepoImpl()),
+        RepositoryProvider<HomeRepo>.value(value: homeRepo),
         RepositoryProvider<AuthRepo>.value(value: authRepo),
         RepositoryProvider<MarketRepo>.value(value: marketRepo),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider<UserCubit>(create: (context) => UserCubit(authRepo)),
-          BlocProvider<MarketCubit>(create: (context) => MarketCubit(marketRepo: marketRepo)),
-          BlocProvider<WalletCubit>(create: (context) => WalletCubit(marketRepo: marketRepo)),
-          BlocProvider<SearchCubit>(create: (context) => SearchCubit(marketRepo: marketRepo)),
+          BlocProvider<MarketCubit>(
+            create: (context) => MarketCubit(marketRepo: marketRepo),
+          ),
+          BlocProvider<WalletCubit>(
+            create: (context) => WalletCubit(marketRepo: marketRepo),
+          ),
+          BlocProvider<SearchCubit>(
+            create: (context) => SearchCubit(marketRepo: marketRepo),
+          ),
+          BlocProvider<HomeCubit>(
+            create: (context) => HomeCubit(homeRepo: homeRepo),
+          ),
         ],
         child: MaterialApp(
           title: 'tMinus1 Crypto',

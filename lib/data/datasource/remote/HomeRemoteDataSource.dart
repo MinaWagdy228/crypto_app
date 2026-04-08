@@ -1,6 +1,6 @@
 
 import '../../model/MarketCoinModel.dart';
 
-abstract class RemoteDataSource {
+abstract class HomeRemoteDataSource {
   Future<List<MarketCoinModel>> getCoins();
 }

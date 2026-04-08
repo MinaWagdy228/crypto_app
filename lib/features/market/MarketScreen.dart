@@ -34,7 +34,7 @@ class _MarketScreenState extends State<MarketScreen> {
           children: [
             HomeAppBar(
               onAvatarTapped: () => Navigator.pushNamed(context, AppRoutes.profile),
-              onSearchTapped: () => print('Search Tapped'),
+              onSearchTapped: () => Navigator.pushNamed(context, AppRoutes.search),
               onScanTapped: () => print('Scan Tapped'),
               onNotifTapped: () => print('Notif Tapped'),
             ),

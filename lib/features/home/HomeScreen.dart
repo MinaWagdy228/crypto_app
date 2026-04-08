@@ -1,4 +1,4 @@
-import 'package:crypto_app/features/home/cubit/CoinStates.dart';
+import 'package:crypto_app/features/home/cubit/HomeStates.dart';
 import 'package:crypto_app/features/home/widgets/ActionCard.dart';
 import 'package:crypto_app/features/home/widgets/CoinCard.dart'; // Assuming CoinData is here
 import 'package:crypto_app/features/home/widgets/CoinListSection.dart';
@@ -11,8 +11,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/AppColors.dart';
 import '../../core/constants/AppAssets.dart';
 import '../../core/routing/AppRoutes.dart';
-import '../../data/repository/CoinRepo.dart';
-import 'cubit/CoinCubit.dart';
+import '../../data/repository/HomeRepo.dart';
+import 'cubit/HomeCubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    context.read<HomeCubit>().fetchTopCoins();
   }
 
   @override
@@ -107,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 32),
 
-                    BlocBuilder<CoinCubit, CoinStates>(
+                    BlocBuilder<HomeCubit, HomeStates>(
                       builder: (context, state) {
                         if (state is CoinLoadingState) {
                           return const Center(

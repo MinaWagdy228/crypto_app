@@ -1,10 +1,10 @@
 import 'package:crypto_app/core/utils/AppValidators.dart';
-import 'package:crypto_app/data/datasource/local/LocalDataSource.dart';
+import 'package:crypto_app/data/datasource/local/AuthLocalDataSource.dart';
 import 'package:crypto_app/data/model/UserModel.dart';
 import 'AuthRepo.dart';
 
 class AuthRepoImpl implements AuthRepo {
-  final LocalDataSource localDataSource;
+  final AuthLocalDataSource localDataSource;
 
   AuthRepoImpl({required this.localDataSource});
 

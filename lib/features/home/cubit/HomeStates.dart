@@ -1,16 +1,16 @@
 import '../../../data/model/MarketCoinModel.dart';
 
-abstract class CoinStates {}
+abstract class HomeStates {}
 
-class CoinLoadingState extends CoinStates {}
+class CoinLoadingState extends HomeStates {}
 
-class CoinSuccessState extends CoinStates {
+class CoinSuccessState extends HomeStates {
   final List<MarketCoinModel> coins;
 
   CoinSuccessState(this.coins);
 }
 
-class CoinErrorState extends CoinStates {
+class CoinErrorState extends HomeStates {
   final String errorMessage;
 
   CoinErrorState(this.errorMessage);

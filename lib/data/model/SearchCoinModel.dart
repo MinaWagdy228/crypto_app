@@ -3,6 +3,7 @@ class SearchCoinModel {
   final String name;
   final String symbol;
   final String thumb;
+  final String large;
   final int? marketCapRank;
 
   SearchCoinModel({
@@ -10,6 +11,7 @@ class SearchCoinModel {
     required this.name,
     required this.symbol,
     required this.thumb,
+    required this.large,
     this.marketCapRank,
   });
 
@@ -19,6 +21,7 @@ class SearchCoinModel {
       name: json['name'] ?? '',
       symbol: (json['symbol'] ?? '').toString().toUpperCase(),
       thumb: json['thumb'] ?? '',
+      large: json['large'] ?? '',
       marketCapRank: json['market_cap_rank'],
     );
   }

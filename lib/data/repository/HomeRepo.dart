@@ -1,6 +1,6 @@
 
 import '../model/MarketCoinModel.dart';
 
-abstract class CoinRepo {
+abstract class HomeRepo {
   Future<List<MarketCoinModel>> getTopCoins();
 }

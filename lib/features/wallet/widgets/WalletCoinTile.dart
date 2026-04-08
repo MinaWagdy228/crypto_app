@@ -58,7 +58,7 @@ class WalletCoinTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                mockedHoldingAmount.toStringAsFixed(2),
+                mockedHoldingAmount.toStringAsFixed(2), // Mocked holding amount
                 style: AppStyles.bodyLarge(color: AppColors.white)
                     .copyWith(fontWeight: FontWeight.w600),
               ),

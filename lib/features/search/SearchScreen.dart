@@ -126,8 +126,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                 id: searchCoin.id,
                                 symbol: searchCoin.symbol,
                                 name: searchCoin.name,
-                                image: searchCoin.thumb,
-                                currentPrice: 0.0, // Default to 0 until Market Screen refreshes it
+                                image: searchCoin.large,
+                                currentPrice: 0.0,
                                 priceChangePercentage24h: 0.0,
                               );
 
