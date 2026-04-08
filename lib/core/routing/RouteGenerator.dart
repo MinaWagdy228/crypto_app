@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../features/main_layout/MainLayoutScreen.dart';
+import '../../features/search/SearchScreen.dart';
 import 'AppRoutes.dart';
 
 import '../../features/splash/SplashScreen.dart';
@@ -30,6 +31,9 @@ class RouteGenerator {
 
       case AppRoutes.mainLayout:
         return MaterialPageRoute(builder: (_) => const MainLayoutScreen());
+
+      case AppRoutes.search:
+        return MaterialPageRoute(builder: (_) => const SearchScreen());
       default:
         return _errorRoute();
     }

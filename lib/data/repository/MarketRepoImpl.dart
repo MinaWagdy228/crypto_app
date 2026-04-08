@@ -1,6 +1,7 @@
 import '../../../../data/model/MarketCoinModel.dart';
 import '../datasource/local/MarketLocalDataSource.dart';
 import '../datasource/remote/MarketRemoteDataSource.dart';
+import '../model/SearchCoinModel.dart';
 import 'MarketRepo.dart';
 
 class MarketRepoImpl implements MarketRepo {
@@ -30,5 +31,10 @@ class MarketRepoImpl implements MarketRepo {
   @override
   bool isFavorite(String coinId) {
     return localDataSource.isFavorite(coinId);
+  }
+
+  @override
+  Future<List<SearchCoinModel>> searchCoins(String query) {
+    return remoteDataSource.searchCoins(query);
   }
 }

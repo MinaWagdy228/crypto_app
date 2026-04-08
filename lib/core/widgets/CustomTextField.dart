@@ -7,9 +7,9 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
   final bool isPassword;
   final TextInputType keyboardType;
-
-  // 1. Added the validator property
   final String? Function(String?)? validator;
+  final Widget? prefixIcon;
+  final void Function(String)? onChanged;
 
   const CustomTextField({
     super.key,
@@ -17,7 +17,9 @@ class CustomTextField extends StatefulWidget {
     required this.controller,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
-    this.validator, // 2. Added to constructor
+    this.validator,
+    this.prefixIcon,
+    this.onChanged,
   });
 
   @override
@@ -35,55 +37,52 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    // 3. Upgraded to TextFormField and moved container styling into InputDecoration
     return TextFormField(
       controller: widget.controller,
       obscureText: _obscureText,
       keyboardType: widget.keyboardType,
       style: const TextStyle(color: AppColors.white),
-      validator: widget.validator, // 4. Hooked up the validator
+      validator: widget.validator,
+      onChanged: widget.onChanged,
+      // Hook up onChanged
       decoration: InputDecoration(
         hintText: widget.hintText,
-        hintStyle: AppStyles.bodyMedium().copyWith(
-          color: AppColors.grey,
-        ),
-
-        // Native background styling (replaces the old Container)
+        hintStyle: AppStyles.bodyMedium().copyWith(color: AppColors.grey),
         filled: true,
         fillColor: AppColors.darkSurface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-
-        // Standard border
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
+        prefixIcon: widget.prefixIcon,
+        // Hook up prefixIcon
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.0),
           borderSide: BorderSide.none,
         ),
-
-        // Border when a validation error triggers
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.0),
           borderSide: const BorderSide(color: Colors.redAccent, width: 1.0),
         ),
-
-        // Border when focused and showing an error
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.0),
           borderSide: const BorderSide(color: Colors.redAccent, width: 1.0),
         ),
-
         suffixIcon: widget.isPassword
             ? IconButton(
-          icon: Icon(
-            _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-            color: AppColors.grey,
-            size: 20,
-          ),
-          onPressed: () {
-            setState(() {
-              _obscureText = !_obscureText;
-            });
-          },
-        )
+                icon: Icon(
+                  _obscureText
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                  color: AppColors.grey,
+                  size: 20,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
+              )
             : null,
       ),
     );

@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 HomeAppBar(
                   onAvatarTapped: () =>
                       Navigator.pushNamed(context, AppRoutes.profile),
-                  onSearchTapped: () => print('Search tapped'),
+                  onSearchTapped: () => Navigator.pushNamed(context, AppRoutes.search),
                   onScanTapped: () => print('Scan tapped'),
                   onNotifTapped: () => print('Notif tapped'),
                 ),

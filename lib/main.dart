@@ -7,6 +7,7 @@ import 'package:crypto_app/data/repository/AuthRepoImpl.dart';
 import 'package:crypto_app/data/datasource/local/LocalDataSourceImpl.dart';
 import 'package:crypto_app/features/auth/cubit/UserCubit.dart';
 import 'package:crypto_app/features/market/cubit/MarketCubit.dart';
+import 'package:crypto_app/features/search/cubit/SearchCubit.dart';
 import 'package:crypto_app/features/wallet/cubit/WalletCubit.dart';
 
 import 'package:flutter/material.dart';
@@ -77,6 +78,7 @@ class CryptoApp extends StatelessWidget {
           BlocProvider<UserCubit>(create: (context) => UserCubit(authRepo)),
           BlocProvider<MarketCubit>(create: (context) => MarketCubit(marketRepo: marketRepo)),
           BlocProvider<WalletCubit>(create: (context) => WalletCubit(marketRepo: marketRepo)),
+          BlocProvider<SearchCubit>(create: (context) => SearchCubit(marketRepo: marketRepo)),
         ],
         child: MaterialApp(
           title: 'tMinus1 Crypto',

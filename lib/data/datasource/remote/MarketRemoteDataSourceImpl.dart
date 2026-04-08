@@ -1,12 +1,13 @@
 import '../../../../core/constants/ApiConstants.dart';
 import '../../../../core/network/DioHelper.dart';
 import '../../../../data/model/MarketCoinModel.dart';
+import '../../model/SearchCoinModel.dart';
 import 'MarketRemoteDataSource.dart';
 
 class MarketRemoteDataSourceImpl implements MarketRemoteDataSource {
   late final DioHelper dioHelper;
 
-  MarketRemoteDataSourceImpl(){
+  MarketRemoteDataSourceImpl() {
     dioHelper = DioHelper();
   }
 
@@ -28,6 +29,22 @@ class MarketRemoteDataSourceImpl implements MarketRemoteDataSource {
       return data.map((json) => MarketCoinModel.fromJson(json)).toList();
     } else {
       throw Exception('Failed to fetch coins from CoinGecko');
+    }
+  }
+
+  @override
+  Future<List<SearchCoinModel>> searchCoins(String query) async {
+    final response = await dioHelper.get(
+      path: ApiConstants.coinGeckoBaseUrl + ApiConstants.coinGeckoSearch,
+      queryParameters: {'query': query},
+    );
+
+    if (response.statusCode == 200) {
+      // The API wraps the list inside a "coins" key
+      final List<dynamic> data = response.data['coins'];
+      return data.map((json) => SearchCoinModel.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to search coins');
     }
   }
 }
