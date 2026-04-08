@@ -53,4 +53,55 @@ class UserCubit extends Cubit<UserStates> {
       emit(UserErrorState(e.toString()));
     }
   }
+
+  // Future<void> logout() async {
+  //   emit(UserLoadingState());
+  //   try {
+  //     await authRepo.logoutUser();
+  //     emit(UserInitialState());
+  //   } catch (e) {
+  //     emit(UserErrorState(e.toString()));
+  //   }
+  // }
+
+  Future<void> fetchCurrentUser() async {
+    emit(UserLoadingState());
+    try {
+      final user = await authRepo.getCurrentUser();
+      if (user != null) {
+        emit(UserLoadedState(user));
+      } else {
+        emit(UserErrorState("Could not load user profile."));
+      }
+    } catch (e) {
+      emit(UserErrorState(e.toString()));
+    }
+  }
+
+  Future<void> updateProfile(UserModel updatedUser) async {
+    emit(UserLoadingState());
+    try {
+      await authRepo.updateUser(updatedUser);
+      emit(UserProfileUpdateSuccessState());
+      emit(UserLoadedState(updatedUser));
+    } catch (e) {
+      emit(UserErrorState(e.toString()));
+    }
+  }
+
+
+  Future<void> checkAuthStatus() async {
+    await Future.delayed(const Duration(milliseconds: 2000));
+
+    try {
+      final isLoggedIn = await authRepo.isLoggedIn();
+      if (isLoggedIn) {
+        emit(UserAuthenticatedState());
+      } else {
+        emit(UserUnauthenticatedState());
+      }
+    } catch (e) {
+      emit(UserUnauthenticatedState());
+    }
+  }
 }

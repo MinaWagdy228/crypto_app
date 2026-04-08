@@ -36,6 +36,7 @@ class AuthRepoImpl implements AuthRepo {
   Future<bool> _validateAndLogin(UserModel? user, String password) async {
     if (user != null && _validatePassword(password, user.password)) {
       await localDataSource.saveLoginSession(true);
+      await localDataSource.saveLoggedInUserKey(user.email);
       return true;
     }
     return false;
@@ -62,7 +63,22 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   bool _validatePhoneNumber(String phoneNumber) {
-    final phoneRegex = RegExp(r'^\d{10}$');
+    final phoneRegex = RegExp(r'^\d{11}$');
     return phoneRegex.hasMatch(phoneNumber);
+  }
+
+  @override
+  Future<UserModel?> getCurrentUser() async {
+    final key = await localDataSource.getLoggedInUserKey();
+    if (key != null) {
+      return await localDataSource.getUserByEmail(key);
+    }
+    return null;
+  }
+
+  @override
+  Future<void> updateUser(UserModel user) async {
+    await localDataSource.saveUser(user);
+    await localDataSource.saveLoggedInUserKey(user.email);
   }
 }

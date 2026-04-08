@@ -9,4 +9,7 @@ abstract class AuthLocalDataSource {
   // Shared Preferences
   Future<void> saveLoginSession(bool isLoggedIn);
   Future<bool?> getIsLoggedIn();
+
+  Future<void> saveLoggedInUserKey(String key);
+  Future<String?> getLoggedInUserKey();
 }

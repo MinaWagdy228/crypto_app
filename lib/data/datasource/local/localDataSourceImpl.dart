@@ -34,4 +34,14 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     await box.put(user.mobile, user);
     await box.put(user.email, user);
   }
+
+  @override
+  Future<void> saveLoggedInUserKey(String key) async {
+    await sharedPreferences.setString('LOGGED_IN_USER_KEY', key);
+  }
+
+  @override
+  Future<String?> getLoggedInUserKey() async {
+    return sharedPreferences.getString('LOGGED_IN_USER_KEY');
+  }
 }

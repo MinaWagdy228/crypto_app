@@ -7,7 +7,11 @@ abstract class AuthRepo {
 
   Future<bool> loginUserByPhoneNumber(String phoneNumber, String password);
 
-  Future<bool?> isLoggedIn();
+  Future<bool> isLoggedIn();
 
   Future<void> logoutUser();
+
+  Future<UserModel?> getCurrentUser();
+
+  Future<void> updateUser(UserModel user);
 }
